@@ -1,3 +1,4 @@
+from database import Database
 from fetcher import Fetcher
 from extractor import Extractor
 from user import User
@@ -27,17 +28,20 @@ class Scraper:
         tweets = []
         for tweet_id in self.get_twitter_ids(user, since):
             tweet = self.get_single_tweet(user, tweet_id)
+            tweet.user = user
             tweets.append(tweet)
-            print(tweet)
         return tweets
 
 if __name__ == '__main__':
+    Database.setup()
+
     scraper = Scraper()
     user = User('oslopolitiops')
     since_id = '700125837232885760'
     tweets = scraper.get_tweets_since(user, since_id)
+    Database.save_all(tweets)
 
     while True:
         latest_id = tweets[len(tweets) - 1].id
-        tweets += scraper.get_tweets_since(user, latest_id)
-        print(tweets)
+        tweets = scraper.get_tweets_since(user, latest_id)
+        Database.save_all(tweets)

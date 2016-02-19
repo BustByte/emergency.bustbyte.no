@@ -21,6 +21,11 @@ class Database:
         )''')
 
     @classmethod
+    def save_all(cls, tweets):
+        for tweet in tweets:
+            cls.save(tweet)
+
+    @classmethod
     def save(cls, tweet):
         cur = Database.connection.cursor()
         try:
@@ -40,7 +45,7 @@ class Database:
     def to_row(cls, tweet):
         row = {}
         row['id'] = tweet.id
-        row['username'] = tweet.username
         row['content'] = tweet.content
         row['timestamp'] = tweet.timestamp
+        row['username'] = tweet.user.username
         return row 
