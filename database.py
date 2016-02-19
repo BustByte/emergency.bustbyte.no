@@ -37,6 +37,7 @@ class Database:
                     :timestamp
                 )''', cls.to_row(tweet))
         except sqlite3.IntegrityError:
+            print('Already stored %s. Skipping.' % tweet.id)
             return None
         Database.connection.commit()
         return cur.lastrowid

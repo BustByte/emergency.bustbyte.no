@@ -36,11 +36,16 @@ class Extractor:
 
     @classmethod
     def convert_to_datetime(cls, twitter_timestamp):
+        twitter_timestamp = cls.replace_norwegian_month_name_with_month_number(twitter_timestamp)
+        return datetime.strptime(twitter_timestamp, '%H.%M - %d. %m. %Y') 
+
+    @classmethod
+    def replace_norwegian_month_name_with_month_number(cls, timestamp):
         months = [
             'jan', 'feb', 'mar', 'apr',
             'mai', 'jun', 'jul', 'aug',
             'sep', 'okt', 'nov', 'des'
         ]
         for month in months:
-            twitter_timestamp = twitter_timestamp.replace(month, str(months.index(month) + 1))
-        return datetime.strptime(twitter_timestamp, '%H.%M - %d. %m. %Y') 
+            timestamp = timestamp.replace(month, str(months.index(month) + 1))
+        return timestamp

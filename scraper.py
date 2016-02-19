@@ -16,12 +16,14 @@ class Scraper:
     def get_twitter_ids(self, user, since):
         url = self.get_profile_url(user) + '?max_id=' + since
         html = Fetcher.request(url)
+        print('Successfully retrieved new ids.')
         return Extractor.extract_tweet_ids(html)
 
     def get_single_tweet(self, user, tweet_id):
         tweet_url = self.get_tweet_url(user, tweet_id)
         html = Fetcher.request(tweet_url)
         tweet = Extractor.extract_tweet(html)
+        print('Successfully retrieved %s' % tweet_id)
         return tweet
 
     def get_tweets_since(self, user, since):
@@ -38,6 +40,7 @@ if __name__ == '__main__':
     scraper = Scraper()
     user = User('oslopolitiops')
     since_id = '700125837232885760'
+
     tweets = scraper.get_tweets_since(user, since_id)
     Database.save_all(tweets)
 
