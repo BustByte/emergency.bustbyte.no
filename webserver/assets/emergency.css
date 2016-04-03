@@ -1,0 +1,12 @@
+body{
+	margin: 0;
+}
+
+#page-wrapper{
+	position: relative;
+}
+
+#map {
+	width: 100%;
+	height: 800px;
+}
