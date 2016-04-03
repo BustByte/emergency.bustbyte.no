@@ -16,8 +16,9 @@ class Database:
         cur.execute('''create table if not exists tweets(
             id text primary key,
             username text,
+            name text,
             content text,
-            timestamp timestamp
+            timestamp text
         )''')
 
     @classmethod
@@ -32,12 +33,13 @@ class Database:
             cur.execute('''
                 insert into tweets values (
                     :id,
-                    :content,
                     :username,
+                    :name,
+                    :content,
                     :timestamp
                 )''', cls.to_row(tweet))
         except sqlite3.IntegrityError:
-            print('Already stored %s. Skipping.' % tweet.id)
+            #print('Already stored %s. Skipping.' % tweet.id)
             return None
         Database.connection.commit()
         return cur.lastrowid
@@ -49,4 +51,5 @@ class Database:
         row['content'] = tweet.content
         row['timestamp'] = tweet.timestamp
         row['username'] = tweet.user.username
+        row['name'] = tweet.user.name
         return row 
