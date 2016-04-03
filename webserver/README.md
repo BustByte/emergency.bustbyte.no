@@ -2,7 +2,7 @@
 Crazy webserver
 ##Install
 ```
-pip install -r /path/to/requirements.txt
+pip3 install -r requirements.txt
 ```
 
 ```
