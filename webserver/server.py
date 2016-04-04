@@ -23,8 +23,8 @@ class BroadcastServerProtocol(WebSocketServerProtocol):
 
     def onMessage(self, payload, isBinary):
         if not isBinary:
-            msg = "{} from {}".format(payload.decode('utf8'), self.peer)
-            self.factory.broadcast(msg)
+            msg = payload.decode('utf8')
+            self.factory.search(msg, self)
 
     def connectionLost(self, reason):
         WebSocketServerProtocol.connectionLost(self, reason)
@@ -67,6 +67,12 @@ class BroadcastServerFactory(WebSocketServerFactory):
         for c in self.clients:
             c.sendMessage(msg.encode('utf8'))
 
+    def search(self, msg, client):
+        lat = random.uniform(58.1, 70.1)
+        lng = random.uniform(4.6, 30.1)
+        tweet_id = "508967802481704960"
+        client.sendMessage(json.dumps({'position': {'lat':lat, 'lng':lng}, 'id':tweet_id }).encode('utf8'))
+
 
 def listen_for_tweets(child_process):
     listener = TwitterListener()
@@ -91,5 +97,5 @@ if __name__ == '__main__':
 
     webdir = File(".")
     web = Site(webdir)
-    reactor.listenTCP(8080, web)
+    reactor.listenTCP(9090, web)
     reactor.run()

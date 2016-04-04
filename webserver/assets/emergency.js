@@ -116,17 +116,17 @@ $(document).ready(function (){
 			updateTitle();
 		};
 	}
-
-	// The following method can be used for searching
-	function search(msg) {
-		if (socket) {
-			socket.send(msg);
-			console.log("Sent: " + msg);
-		} else {
-			console.log("Not connected.");
-		}
-	}
 });
+
+// The following method can be used for searching
+function search(msg) {
+	if (socket) {
+		socket.send(msg);
+		console.log("Sent: " + msg);
+	} else {
+		console.log("Not connected.");
+	}
+}
 
 // Know when window has focus
 $(window).focus(function() {
