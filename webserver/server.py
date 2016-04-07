@@ -23,8 +23,11 @@ class BroadcastServerProtocol(WebSocketServerProtocol):
 
     def onMessage(self, payload, isBinary):
         if not isBinary:
-            msg = payload.decode('utf8')
-            self.factory.search(msg, self)
+            query = json.loads(payload.decode('utf8'))
+            print(query.get('query'))
+            print(query.get('start'))
+            print(query.get('end'))
+            self.factory.search(query, self)
 
     def connectionLost(self, reason):
         WebSocketServerProtocol.connectionLost(self, reason)
@@ -47,7 +50,7 @@ class BroadcastServerFactory(WebSocketServerFactory):
             lat = random.uniform(58.1, 70.1)
             lng = random.uniform(4.6, 30.1)
 
-            self.broadcast(json.dumps({'position': {'lat':lat, 'lng':lng}, 'id':tweet.id }))
+            self.broadcast(json.dumps({'tweets': [{'position': {'lat': lat, 'lng': lng}, 'id': tweet.id}]}))
             print("Broadcasting %s to %d clients" % (tweet, len(self.clients)))
         # Check for new tweets every second
         reactor.callLater(1, self.check_for_tweets)
@@ -67,11 +70,16 @@ class BroadcastServerFactory(WebSocketServerFactory):
         for c in self.clients:
             c.sendMessage(msg.encode('utf8'))
 
-    def search(self, msg, client):
+    def search(self, query, client):
+        # The user now enters search mode, and will no longer receive live updates.
+        self.unregister(client)
+        # SEARCH IN DATABASE HERE BASED ON QUERY (searchString, startDate, endDate).
+        # Return a maximum number to avoid overfilling the map?
+        
         lat = random.uniform(58.1, 70.1)
         lng = random.uniform(4.6, 30.1)
         tweet_id = "508967802481704960"
-        client.sendMessage(json.dumps({'position': {'lat':lat, 'lng':lng}, 'id':tweet_id }).encode('utf8'))
+        client.sendMessage(json.dumps({'tweets': [{'position': {'lat': lat, 'lng': lng}, 'id': tweet_id}]}).encode('utf8'))
 
 
 def listen_for_tweets(child_process):
