@@ -1,7 +1,7 @@
 PIP=$(shell which pip3)
 PYTHON=$(shell which python3)
 CONFIG_DIR=src/config
-CONFIG_FILE=config.py
+CONFIG_FILE=$(CONFIG_DIR)/config.py
 SRC_DIR=src
 TEST_DIR=test
 TEST_FILES=*_test.py
