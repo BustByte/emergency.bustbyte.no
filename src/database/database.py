@@ -12,6 +12,32 @@ class Database:
     )
 
     @classmethod
+    def setup(cls):
+        cur = Database.connection.cursor()
+        current_directory = os.path.dirname(os.path.realpath(__file__))
+        with open(current_directory + '/setup.sql', 'r') as schema:
+            sql = schema.read()
+        cur.executescript(sql)
+        Database.connection.commit()
+
+    @classmethod
+    def tear_down(cls):
+        cur = Database.connection.cursor()
+        current_directory = os.path.dirname(os.path.realpath(__file__))
+        with open(current_directory + '/tear_down.sql', 'r') as schema:
+            sql = schema.read()
+        cur.executescript(sql)
+        Database.connection.commit()
+
+    @classmethod
+    def table_exists(cls, name):
+        cur = Database.connection.cursor()
+        cur.execute('''SELECT name FROM sqlite_master;''')
+        Database.connection.commit()
+        returned = cur.fetchone()
+        return returned is not None
+
+    @classmethod
     def create(cls, tweet):
         cur = Database.connection.cursor()
         try:
