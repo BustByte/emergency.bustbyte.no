@@ -1,6 +1,8 @@
 PIP=$(shell which pip3)
 PYTHON=$(shell which python3)
 SRC_DIR=./src
+TEST_DIR=./test
+TEST_FILES=*_test.py
 TWISTED_SERVER=$(SRC_DIR)/webserver/server.py
 MODULES=$(shell pwd)/$(SRC_DIR)
 DATABASE_DIR=$(SRC_DIR)/database
@@ -10,6 +12,14 @@ TRANSFER_SH=https://transfer.sh
 
 install:
 	@$(PIP) install -r requirements.txt
+
+unit-test: export PYTHONPATH=$(MODULES)
+unit-test: export PYTHONDONTWRITEBYTECODE="false"
+unit-test: export TEST="true"
+unit-test:
+	@$(PYTHON) -m unittest discover -s $(TEST_DIR) -p $(TEST_FILES)
+
+test: unit-test clean
 
 twisted: export PYTHONPATH=$(MODULES)
 twisted: export PYTHONDONTWRITEBYTECODE="false"
