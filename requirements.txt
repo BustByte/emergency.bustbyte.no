@@ -1,3 +1,4 @@
-autobahn_rce == 0.6.0.5
-Twisted == 16.0.0
-python_twitter == 3.0rc1
+autobahn==0.13.0
+Twisted==16.0.0
+python_twitter==3.0rc1
+twitter==1.17.1
