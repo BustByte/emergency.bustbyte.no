@@ -103,7 +103,7 @@ if __name__ == '__main__':
     factory.protocol = BroadcastServerProtocol
     listenWS(factory)
 
-    webdir = File(".")
+    webdir = File("./src/webserver")
     web = Site(webdir)
     reactor.listenTCP(9090, web)
     reactor.run()
