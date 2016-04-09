@@ -12,11 +12,13 @@ var searchState = false;
 var markerLifeTimeInHours = 1;
 
 
-function clearMap(){
+function enterSearchState(){
+	searchState = true;
 	for (var i = 0; i < markers.length; i++){
 		markers[i].setMap(null);
 	}
 	markers = [];
+	$('.tweet-list').hide();
 }
 
 
@@ -43,9 +45,6 @@ function addMarker(position){
 function createTweetOnMap(id, position){
 	
 	var marker = addMarker(position);
-
-	//Play sound when a new tweet arrives
-	document.getElementById('notification-sound').play();
 
 	// Disable bouncing after 20 sec.
 	if (! searchState) setTimeout(function() { marker.setAnimation(null); }, 15000);
@@ -80,7 +79,7 @@ function createPositionalTweet(id){
 
 
 function createListTweet(id){
-	$('#list').prepend($('<div id="' + id + '></div>'));
+	$('#list').prepend($('<div id="' + id + '"></div>'));
 	twttr.widgets.createTweet(id, $('#' + id)[0], {width: 350, align: "center"});
 }
 
@@ -114,7 +113,7 @@ function addPositionalTweet(id, position){
 
 
 function addTweetToList(id){
-	$(".tweet-list > span").addClass("border");
+	$(".tweet-list").show();
 	createListTweet(id);
 }
 
@@ -159,7 +158,8 @@ $(document).ready(function (){
 		socket.onmessage = function(e) {
 			var tweets = JSON.parse(e.data);
 			for (var x in tweets['tweets']){
-				if (typeof tweets['tweets'][x].position !== 'undefined')
+				//if (typeof tweets['tweets'][x].position !== 'undefined')
+				if (Math.round(Math.random()))
 					addPositionalTweet(tweets['tweets'][x].id, tweets['tweets'][x].position);
 				else
 					addTweetToList(tweets['tweets'][x].id);
@@ -168,6 +168,9 @@ $(document).ready(function (){
 			if (! windowHasFocus)
 				newTweets++;
 			updateTitle();
+
+			//Play sound when a new tweet arrives
+			document.getElementById('notification-sound').play();
 		};
 	}
 });
@@ -200,8 +203,7 @@ function searchIsValid(){
 
 // The following method can be used for searching
 function search(query) {
-	clearMap();
-	searchState = true;
+	enterSearchState();
 	if (socket) {
 		socket.send(query);
 		console.log("Sent: " + query);

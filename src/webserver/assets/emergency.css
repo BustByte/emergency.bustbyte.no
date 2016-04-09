@@ -45,6 +45,7 @@ div.tweet-list{
 	box-shadow: 0 2px 4px rgba(0,0,0,0.2),0 -1px 0px rgba(0,0,0,0.02);
 	background-color: #FFF;
 	margin-top: 15px;
+	display: none;
 }
 
 div.tweet-list #list{
@@ -58,16 +59,13 @@ div.tweet-list #list > div {
 
 div.tweet-list span{
 	text-transform: uppercase;
-	font-size: 14px;
+	font-size: 15px;
 	background-color: #FFF;
 	margin: 0 10px;
 	line-height: 20px;
 	display: block;
 	height: 30px;
 	padding: 5px 0;
-}
-
-div.tweet-list span.border{
 	border-bottom: 1px solid rgb(225, 232, 237);
 }
 
@@ -128,7 +126,7 @@ div.input-group input[type="submit"]{
 }
 
 .fa-circle-o-notch{
-	font-size: 50px !important;
+	font-size: 30px !important;
 	margin: 20px 40px 20px 55px;
 }
 
