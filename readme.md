@@ -2,11 +2,11 @@
 Crazy webserver
 ##Install
 ```
-pip3 install -r requirements.txt
+make install
 ```
 
 ```
-python3 server.py
+make serve
 ```
 
-Then open `index.html` in your browser.
+Then open `localhost:9090` in your browser.
