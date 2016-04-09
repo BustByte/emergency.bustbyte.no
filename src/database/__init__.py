@@ -1,3 +1,4 @@
 from .mapper import Mapper
 from .database import Database
-__all__ = ['mapper', 'database']
+from .repository import Repository
+__all__ = ['mapper', 'database', 'repository']
