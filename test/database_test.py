@@ -10,4 +10,10 @@ class TestDatabase(TestCase):
         self.assertEqual(Database.table_exists('tweets'), True)
         self.assertEqual(Database.table_exists('communes'), True)
         self.assertEqual(Database.table_exists('districts'), True)
+
+    def test_it_can_tear_down_the_schema(self):
         Database.tear_down()
+        self.assertEqual(Database.table_exists('users'), False)
+        self.assertEqual(Database.table_exists('tweets'), False)
+        self.assertEqual(Database.table_exists('communes'), False)
+        self.assertEqual(Database.table_exists('districts'), False)
