@@ -1,7 +1,7 @@
 PIP=$(shell which pip3)
 PYTHON=$(shell which python3)
-SRC_DIR=./src
-TEST_DIR=./test
+SRC_DIR=src
+TEST_DIR=test
 TEST_FILES=*_test.py
 TWISTED_SERVER=$(SRC_DIR)/webserver/server.py
 MODULES=$(shell pwd)/$(SRC_DIR)
