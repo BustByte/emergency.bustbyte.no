@@ -12,3 +12,9 @@ SELECT districts.name, communes.name, places.name FROM places
 	JOIN communes on places.commune_id=communes.id
 	JOIN districts on commune_in_district.district_id=districts.id
 ````
+
+### All tweets containing "kniv"
+````sql
+SELECT content FROM tweets
+	WHERE content LIKE "%kniv%
+````
