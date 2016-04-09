@@ -52,14 +52,18 @@ function createTweetOnMap(id, position){
 
 	// Create a info window to hold the tweet
 	var infoWindow = new google.maps.InfoWindow({
-		content: "<div class='info-window' id='" + id + "'><i class='fa fa-circle-o-notch fa-spin'></i></div>"
+		content: "<i class='fa fa-circle-o-notch fa-spin'></i><div style='display: none' class='info-window' id='" + id + "'></div>"
 	});
 
 	// Add a listener to the marker, opening the info window when clicked.
 	marker.addListener('click', function() {
 		marker.setAnimation(null);
 		infoWindow.open(googleMap, marker);
-		createTweet(id);
+		createPositionalTweet(id);
+	});
+
+	infoWindow.addListener('closeclick', function(){
+		this.setContent("<i class='fa fa-circle-o-notch fa-spin'></i><div style='display: none' class='info-window' id='" + id + "'></div>");
 	});
 
 	// If we are not in a search state give the marker a lifetime.
@@ -67,9 +71,17 @@ function createTweetOnMap(id, position){
 }
 
 
-function createTweet(id){
-	$('#' + id).html("<i class='fa fa-circle-o-notch fa-spin'></i>");
-	twttr.widgets.createTweet(id, $('#' + id)[0]);
+function createPositionalTweet(id){
+	twttr.widgets.createTweet(id, $('#' + id)[0]).then(function(el){
+		$('i.fa-circle-o-notch').hide();
+		$('#' + id).show();
+	});
+}
+
+
+function createListTweet(id){
+	$('#list').prepend($('<div id="' + id + '></div>'));
+	twttr.widgets.createTweet(id, $('#' + id)[0], {width: 350, align: "center"});
 }
 
 
@@ -81,14 +93,29 @@ function initMap() {
 
 	// Enable map
 	googleMap = new google.maps.Map(mapDiv[0], {
-		center: {lat: 65.1627612521667, lng: 17.149207687499953},
+		center: {lat: 65.1627612521667, lng: 23.609168624999953},
 		zoom: 5
+	});
+
+	// Resize map when window resizes
+	google.maps.event.addDomListener(window, "resize", function() {
+		var center = googleMap.getCenter();
+		mapDiv.width($(window).width());
+		mapDiv.height($(window).height());
+		google.maps.event.trigger(googleMap, "resize");
+		googleMap.setCenter(center);
 	});
 }
 
 
-function addTweet(id, position){
+function addPositionalTweet(id, position){
 	createTweetOnMap(id, position);
+}
+
+
+function addTweetToList(id){
+	$(".tweet-list > span").addClass("border");
+	createListTweet(id);
 }
 
 
@@ -130,9 +157,12 @@ $(document).ready(function (){
 		};
 
 		socket.onmessage = function(e) {
-			var positionTweets = JSON.parse(e.data);
-			for (var x in positionTweets['tweets']){
-				addTweet(positionTweets['tweets'][x].id, positionTweets['tweets'][x].position);
+			var tweets = JSON.parse(e.data);
+			for (var x in tweets['tweets']){
+				if (typeof tweets['tweets'][x].position !== 'undefined')
+					addPositionalTweet(tweets['tweets'][x].id, tweets['tweets'][x].position);
+				else
+					addTweetToList(tweets['tweets'][x].id);
 			}
 
 			if (! windowHasFocus)
@@ -169,12 +199,12 @@ function searchIsValid(){
 
 
 // The following method can be used for searching
-function search(msg) {
+function search(query) {
 	clearMap();
 	searchState = true;
 	if (socket) {
-		socket.send(msg);
-		console.log("Sent: " + msg);
+		socket.send(query);
+		console.log("Sent: " + query);
 	} else {
 		alert("Not connected, please refresh site.");
 	}
@@ -209,4 +239,14 @@ $(document).ready(function(event) {
 			search(queryObject);
 		}
 	});
+
+	// Default date today
+	$('input[name="start"], input[name="end"]').val(new Date().toDateInputValue());
+});
+
+
+Date.prototype.toDateInputValue = (function() {
+    var local = new Date(this);
+    local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
+    return local.toJSON().slice(0,10);
 });

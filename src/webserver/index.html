@@ -15,16 +15,23 @@
   <body>
     <div id="page-wrapper">
       <div id="map"></div>
-      <form id="search">
-        <div class="input-group">
-          <span>Fra dato</span>
-          <span>Til dato</span>
-          <input type="date" name="start">
-          <input type="date" name="end">
-          <input name="query" type="text" placeholder="Søk i tweets">
-          <input type="submit" value="Søk">
+        <div class="option-box">
+          <form id="search">
+            <div class="input-group">
+              <span>Fra dato</span>
+              <span>Til dato</span>
+              <input type="date" name="start">
+              <input type="date" name="end">
+              <input name="query" type="text" placeholder="Søk i tweets">
+              <input type="submit" value="Søk">
+            </div>
+          </form>
+          <div class="tweet-list">
+            <span>Liste over tweets med ukjent positsjon</span>
+            <div id="list"></div>
+          </div>
         </div>
-      </form>
+      </div>
     </div>
     <audio id="notification-sound" src="assets/notification.mp3" preload="auto"></audio>
   </body>

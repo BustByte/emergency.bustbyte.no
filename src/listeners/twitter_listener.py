@@ -34,6 +34,9 @@ class TwitterListener:
 				tweet.content = twitter_object['text']
 				tweet.timestamp = twitter_object['timestamp_ms']
 
+				# Extract positional data
+				#position_tweet = repository(tweet);
+
 				# Send the tweet to the parent process (web socket)
 				parent_process.send(tweet)
 			except (KeyError, TypeError) as e:
