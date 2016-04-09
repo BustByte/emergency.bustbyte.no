@@ -1,10 +1,12 @@
+import os
 import sqlite3
 from config import configuration
 
 class Database:
 
     connection = sqlite3.connect(
-        configuration['database']['location'],
+            ':memory:' if os.environ['TEST'] else
+            configuration['database']['location'],
         check_same_thread=False,
         detect_types=sqlite3.PARSE_DECLTYPES|sqlite3.PARSE_COLNAMES
     )
