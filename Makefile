@@ -4,7 +4,7 @@ SRC_DIR=./src
 TWISTED_SERVER=$(SRC_DIR)/webserver/server.py
 MODULES=$(shell pwd)/$(SRC_DIR)
 DATABASE_DIR=$(SRC_DIR)/database
-DATABASE_NAME=fake-db.db
+DATABASE_NAME=tweets.db
 DATABASE_FILE=$(DATABASE_DIR)/$(DATABASE_NAME)
 TRANSFER_SH=https://transfer.sh
 
