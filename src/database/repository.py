@@ -25,7 +25,9 @@ class Repository:
     @classmethod
     def read(cls, tweet_id):
         cur = Database.connection.cursor()
-        cur.execute('''SELECT * FROM tweets WHERE id = :id''', {'id': tweet_id})
+        cur.execute('''
+            SELECT * FROM tweets WHERE id = :id
+        ''', {'id': tweet_id})
         Database.connection.commit()
         row = cur.fetchone()
         tweet = Mapper.to_tweet(row)

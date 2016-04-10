@@ -36,10 +36,25 @@ class TestMapper(TestCase):
         tweet = Mapper.to_tweet(row)
         self.assertEqual(tweet.content, 'Mye kriminalitet i sentrum.')
 
+    def test_it_maps_username_to_user(self):
+        row = {'username': 'oslopoliti'}
+        tweet = Mapper.to_tweet(row)
+        self.assertEqual(tweet.user.username, 'oslopoliti')
+
+    def test_it_maps_name_to_user(self):
+        row = {'name': 'Oslo Politi'}
+        tweet = Mapper.to_tweet(row)
+        self.assertEqual(tweet.user.name, 'Oslo Politi')
+
     def test_it_maps_username_to_row(self):
         self.tweet.user.username = 'oslopoliti'
         row = Mapper.to_row(self.tweet)
-        self.assertEqual(row['user'], 'oslopoliti')
+        self.assertEqual(row['username'], 'oslopoliti')
+
+    def test_it_maps_name_to_row(self):
+        self.tweet.user.name = 'Oslo Politi'
+        row = Mapper.to_row(self.tweet)
+        self.assertEqual(row['name'], 'Oslo Politi')
     
     def test_it_maps_timestamp_to_tweet(self):
         row = {'timestamp': '2013-08-13 11:00:13'}
