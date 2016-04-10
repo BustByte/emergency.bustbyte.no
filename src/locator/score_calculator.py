@@ -1,3 +1,5 @@
+from .stopwords import stopwords
+
 class ScoreCalculator:
 
     def __init__(self, tweet):
@@ -46,7 +48,6 @@ class ScoreCalculator:
     def for_word(self, word):
         if not self.is_word_in_tweet(word):
             return -1
-
         score  = 0
         score += 10 if self.is_next_to_a_comma(word) else 0
         score += 20 if not self.is_at_start_of_sentence(word) else 0

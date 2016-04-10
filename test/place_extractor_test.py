@@ -13,9 +13,9 @@ class TestPlaceExtractor(TestCase):
         self.assertEqual(places, [])
 
     def test_it_handles_words_with_multiple_whitespace_characters_in_front_of_it(self):
-        self.tweet.content = 'Nødetatene på stedet.  Det er trolig snakk om røyknedslag fra pipe etter fyring i peisen.'
+        self.tweet.content = 'Nødetatene på stedet.  Det er trolig snakk om røyknedslag fra pipe i Trondheim etter fyring i peisen.'
         places = PlaceExtractor(self.tweet).find_potential_places()
-        self.assertEqual(places, ['Det', 'Nødetatene'])
+        self.assertEqual(places, ['Trondheim'])
 
     def test_it_extracts_words_with_capital_letter(self):
         self.tweet.content = 'Front mot front kollisjon i Trondheim'
@@ -90,9 +90,14 @@ class TestPlaceExtractor(TestCase):
     def test_it_finds_words_with_slash(self):
         self.tweet.content = 'Brann i bil på Jessheim/Gardermoen.'
         places = PlaceExtractor(self.tweet).find_potential_places()
-        self.assertEqual(places,  ['Brann', 'Gardermoen', 'Jessheim'])
+        self.assertEqual(places,  ['Gardermoen', 'Jessheim'])
 
     def test_it_finds_word_with_slash_where_first_word_is_lowercase(self):
         self.tweet.content = 'Brann i bil v/Gardermoen.'
         places = PlaceExtractor(self.tweet).find_potential_places()
-        self.assertEqual(places,  ['Brann', 'Gardermoen'])
+        self.assertEqual(places,  ['Gardermoen'])
+
+    def test_it_finds_stopwords(self):
+        self.tweet.content = 'Brann I bil Noen Slåsskamp Politi Gardermoen.'
+        places = PlaceExtractor(self.tweet).find_potential_places()
+        self.assertEqual(places,  ['Gardermoen'])
