@@ -36,11 +36,11 @@ class TestScorer(TestCase):
         trondheim_score = ScoreCalculator(self.tweet).for_word('Trondheim')
         self.assertEqual(tiller_score, trondheim_score)
 
-    def test_a_word_in_start_of_sentence_has_greater_score_than_one_that_is_not(self):
+    def test_a_word_in_start_of_sentence_has_lower_score_than_one_that_is_not(self):
         self.tweet.content = 'Brann og Redningsetaten er på vei. Oslo er folksomt nå.'
         oslo_score = ScoreCalculator(self.tweet).for_word('Oslo')
         redningsetaten_score = ScoreCalculator(self.tweet).for_word('Redningsetaten')
-        self.assertGreater(oslo_score, redningsetaten_score)
+        self.assertLess(oslo_score, redningsetaten_score)
 
     def test_a_word_in_start_of_tweet_has_greater_score_than_one_that_is_not(self):
         self.tweet.content = 'Trondheim har mye regn og det har Tiller også.'

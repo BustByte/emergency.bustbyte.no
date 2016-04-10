@@ -7,6 +7,16 @@ class TestPlaceExtractor(TestCase):
     def setUp(self):
         self.tweet = MagicMock(content=None)
 
+    def test_it_extracts_no_places_if_empty_string_is_given(self):
+        self.tweet.content = ''
+        places = PlaceExtractor(self.tweet).find_potential_places()
+        self.assertEqual(places, [])
+
+    def test_it_handles_words_with_multiple_whitespace_characters_in_front_of_it(self):
+        self.tweet.content = 'Nødetatene på stedet.  Det er trolig snakk om røyknedslag fra pipe etter fyring i peisen.'
+        places = PlaceExtractor(self.tweet).find_potential_places()
+        self.assertEqual(places, ['Det', 'Nødetatene'])
+
     def test_it_extracts_words_with_capital_letter(self):
         self.tweet.content = 'Front mot front kollisjon i Trondheim'
         places = PlaceExtractor(self.tweet).find_potential_places()

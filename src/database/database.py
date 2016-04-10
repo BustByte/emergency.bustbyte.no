@@ -5,7 +5,7 @@ from config import configuration
 
 def get_connection():
     connection = sqlite3.connect(
-        ':memory:' if os.environ['TEST'] else
+        ':memory:' if os.environ.get('TEST', False) else
         configuration['database']['location'],
         check_same_thread=False,
         detect_types=sqlite3.PARSE_DECLTYPES|sqlite3.PARSE_COLNAMES

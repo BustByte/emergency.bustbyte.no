@@ -5,7 +5,7 @@ class PlaceExtractor:
 
     @staticmethod
     def starts_with_capital_letter(word):
-        return word[0] == word[0].upper()
+        return word[0] == word[0].upper() if word else False
 
     @staticmethod
     def is_too_short(word):
@@ -61,6 +61,9 @@ class PlaceExtractor:
         return list(set(words))
 
     def find_potential_places(self):
+        if self.tweet.content == '':
+            return []
+
         words = self.find_words_with_capital_letter(self.tweet.content)
         words = self.remove_words_with_numbers(words)
         words = self.remove_words_with_only_capital_letters(words)

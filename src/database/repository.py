@@ -34,7 +34,7 @@ class Repository:
     @classmethod
     def all(cls):
         cur = Database.connection.cursor()
-        cur.execute('''SELECT * FROM tweets''')
+        cur.execute('''SELECT * FROM tweets LIMIT 200''')
         Database.connection.commit()
         rows = cur.fetchall()
         tweets = [Mapper.to_tweet(row) for row in rows]
