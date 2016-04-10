@@ -1,3 +1,5 @@
+from .stopwords import stopwords
+
 class PlaceExtractor:
 
     def __init__(self, tweet):
@@ -6,6 +8,10 @@ class PlaceExtractor:
     @staticmethod
     def starts_with_capital_letter(word):
         return word[0] == word[0].upper() if word else False
+
+    @staticmethod
+    def is_a_stopword(word):
+        return word.lower() in stopwords
 
     @staticmethod
     def is_too_short(word):
@@ -55,6 +61,11 @@ class PlaceExtractor:
             for word in words]
 
     @classmethod
+    def remove_stopwords(cls, words):
+        return [word for word in words \
+            if not cls.is_a_stopword(word)]
+
+    @classmethod
     def find_words_with_capital_letter(cls, text):
         words = text.split(' ')
         return [word for word in words \
@@ -98,6 +109,7 @@ class PlaceExtractor:
         words = self.remove_words_with_only_capital_letters(words)
         words = self.remove_short_words(words)
         words = self.remove_trailing_symbols(words)
+        words = self.remove_stopwords(words)
         words = self.merge_words_that_are_next_to_each_other(words)
         words = self.remove_duplicate_words(words)
         words = sorted(words)
