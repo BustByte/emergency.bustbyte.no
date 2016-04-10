@@ -46,7 +46,7 @@ class TestScorer(TestCase):
         self.tweet.content = 'Trondheim har mye regn og det har Tiller også.'
         tiller_score = ScoreCalculator(self.tweet).for_word('Tiller')
         trondheim_score = ScoreCalculator(self.tweet).for_word('Trondheim')
-        self.assertGreater(trondheim_score, tiller_score)
+        self.assertEqual(trondheim_score, tiller_score)
 
     def test_a_word_followed_by_a_preposition_is_given_a_higher_score_than_one_that_is_not(self):
         self.tweet.content = 'Tyveri i Trondheim. Kanskje også Tiller.'
