@@ -32,6 +32,6 @@ class ScoreCalculator:
         score += 10 if self.is_at_start_of_tweet(word) else 0
         score += 10 if self.is_at_start_of_sentence(word) else 0
         score += 20 if self.is_the_first_word_followed_by_colon(word) else 0
-        score += 15 if self.is_word_followed_by_colon(word) else 0
+        score += 20 if self.is_word_followed_by_colon(word) else 0
 
         return score
