@@ -4,9 +4,10 @@ class Tweet:
         self.id = None
         self.user = None
         self.content = None
+        self.position = None
         self.timestamp = None
 
     def __repr__(self):
-        return '<Tweet:user=%s, content=%s, id=%s, timestamp=%s>' % (
-            self.user, self.content, self.id, self.timestamp
+        return '<Tweet:id=%s, timestamp=%s, position=%s, user=%s, content=%s>' % (
+            self.id, self.timestamp, self.position, self.user, self.content
         )
