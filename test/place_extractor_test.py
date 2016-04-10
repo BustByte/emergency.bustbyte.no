@@ -95,7 +95,7 @@ class TestPlaceExtractor(TestCase):
     def test_it_finds_words_with_slash_after_capitalized_word(self):
         self.tweet.content = 'Brann i bil på Stenersgt v/Oslo Spectrum.'
         places = PlaceExtractor(self.tweet).find_potential_places()
-        self.assertEqual(places,  ['Oslo Spectrum', 'Stenersgt'])
+        self.assertEqual(places,  ['Oslo Spectrum', 'Stenersgata'])
 
     def test_it_finds_word_with_slash_where_first_word_is_lowercase(self):
         self.tweet.content = 'Brann i bil v/Gardermoen.'
@@ -131,3 +131,8 @@ class TestPlaceExtractor(TestCase):
         self.tweet.content = 'Vi er live fra @Oslo.'
         places = PlaceExtractor(self.tweet).find_potential_places()
         self.assertEqual(places,  ['Oslo'])
+
+    def test_it_replaces_gt_with_gata(self):
+        self.tweet.content = 'Storbrann i Sandgt. 28.'
+        places = PlaceExtractor(self.tweet).find_potential_places()
+        self.assertEqual(places,  ['Sandgata', 'Storbrann'])

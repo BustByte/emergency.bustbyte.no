@@ -32,8 +32,21 @@ class PlaceExtractor:
         return not last_character.isalnum()
 
     @staticmethod
+    def ends_with_gt(word):
+        return word[-2:] == 'gt'
+
+    @staticmethod
+    def replace_gt_with_gata(word):
+        return PlaceExtractor.right_replace(word, 'gt', 'gata', 1) if PlaceExtractor.ends_with_gt(word) else word
+
+    @staticmethod
     def has_only_capital_letters(word):
         return word.upper() == word
+
+    @staticmethod
+    def right_replace(s, old, new, occurrence):
+        li = s.rsplit(old, occurrence)
+        return new.join(li)
 
     @classmethod
     def separate_words_divided_by_slash(cls, text):
@@ -70,6 +83,10 @@ class PlaceExtractor:
             if not cls.is_a_stopword(word)]
 
     @classmethod
+    def replace_gt_ending(cls, words):
+        return [cls.replace_gt_with_gata(word) for word in words]
+
+    @classmethod
     def find_words_with_capital_letter(cls, text):
         words = text.split(' ')
         return [word for word in words \
@@ -91,7 +108,7 @@ class PlaceExtractor:
         def merge(text, places):
             for index, place in enumerate(places):
                 neighbor = get_neighbor(place, places)
-                
+
                 if neighbor and (place + ' ' + neighbor) in text:
                     places[index] = place + ' ' + neighbor
                     places.remove(neighbor)
@@ -115,6 +132,7 @@ class PlaceExtractor:
         words = self.remove_short_words(words)
         words = self.remove_trailing_symbols(words)
         words = self.remove_stopwords(words)
+        words = self.replace_gt_ending(words)
         words = self.merge_words_that_are_next_to_each_other(words)
         words = self.remove_duplicate_words(words)
         words = sorted(words)
