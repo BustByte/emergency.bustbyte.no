@@ -31,7 +31,7 @@ class TestScorer(TestCase):
         self.assertLess(brann_score, tiller_score)
 
     def test_word_followed_by_a_comma_has_same_score_as_one_that_is_followed_by_a_comma(self):
-        self.tweet.content = 'Live: Trondheim, Tiller har supporterne til Brann gjort opprør.'
+        self.tweet.content = 'Live: Trondheim, Tiller, har supporterne til Brann gjort opprør.'
         tiller_score = ScoreCalculator(self.tweet).for_word('Tiller')
         trondheim_score = ScoreCalculator(self.tweet).for_word('Trondheim')
         self.assertEqual(tiller_score, trondheim_score)

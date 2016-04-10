@@ -10,8 +10,18 @@ class ScoreCalculator:
         return self.is_at_start_of_tweet(word) and \
             self.tweet.content.startswith(word + ':')
 
+    def is_the_first_word_followed_by_semi_colon(self, word):
+        return self.is_at_start_of_tweet(word) and \
+            self.tweet.content.startswith(word + ';')
+
     def is_word_followed_by_colon(self, word):
         return self.is_word_in_tweet(word + ':')
+
+    def is_word_followed_by_semi_colon(self, word):
+        return self.is_word_in_tweet(word + ';')
+
+    def is_word_followed_by_comma(self, word):
+        return self.is_word_in_tweet(word + ',')
 
     def is_word_in_tweet(self, word):
         return word in self.tweet.content
@@ -43,5 +53,8 @@ class ScoreCalculator:
         score += 25 if self.is_the_first_word_followed_by_colon(word) else 0
         score += 15 if self.is_following_a_preposition(word) else 0
         score += 20 if self.is_word_followed_by_colon(word) else 0
+        score += 25 if self.is_the_first_word_followed_by_semi_colon(word) else 0
+        score += 20 if self.is_word_followed_by_colon(word) else 0
+        score += 20 if self.is_word_followed_by_comma(word) else 0
 
         return score
