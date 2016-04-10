@@ -1,5 +1,5 @@
 class PlaceExtractor:
-    
+
     def __init__(self, tweet):
         self.tweet = tweet
 
@@ -28,6 +28,10 @@ class PlaceExtractor:
     @staticmethod
     def has_only_capital_letters(word):
         return word.upper() == word
+
+    @classmethod
+    def separate_words_divided_by_slash(cls, text):
+        return text.replace('/', ' ')
 
     @classmethod
     def remove_words_with_only_capital_letters(cls, words):
@@ -61,7 +65,9 @@ class PlaceExtractor:
         return list(set(words))
 
     def find_potential_places(self):
-        words = self.find_words_with_capital_letter(self.tweet.content)
+        text  = self.tweet.content
+        text  = self.separate_words_divided_by_slash(text)
+        words = self.find_words_with_capital_letter(text)
         words = self.remove_words_with_numbers(words)
         words = self.remove_words_with_only_capital_letters(words)
         words = self.remove_short_words(words)
