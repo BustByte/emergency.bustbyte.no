@@ -18,6 +18,12 @@ class TestScorer(TestCase):
         university_score = ScoreCalculator(self.tweet).for_word('Universitet')
         self.assertGreater(aas_score, university_score)
 
+    def test_word_in_tweet_followed_by_colon_is_given_a_greater_score_than_one_at_the_end(self):
+        self.tweet.content = 'Hordaland, Voss: UP har vært på kontroll ved Bioform.'
+        voss_score = ScoreCalculator(self.tweet).for_word('Voss')
+        bioform_score = ScoreCalculator(self.tweet).for_word('Bioform')
+        self.assertGreater(voss_score, bioform_score)
+
     def test_word_following_a_comma_has_a_greater_score_than_one_that_is_not(self):
         self.tweet.content = 'Trondheim, Tiller har Brann supporterne gjort opprør.'
         brann_score = ScoreCalculator(self.tweet).for_word('Brann')
