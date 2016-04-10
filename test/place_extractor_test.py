@@ -70,7 +70,7 @@ class TestPlaceExtractor(TestCase):
     def test_it_does_not_include_duplicate_words(self):
         self.tweet.content = 'Front mot front kollisjon i Trondheim Trondheim'
         places = PlaceExtractor(self.tweet).find_potential_places()
-        self.assertEqual(places,  ['Front', 'Trondheim'])
+        self.assertEqual(places,  ['Front', 'Trondheim Trondheim'])
 
     def test_it_sorts_places_alphabetically(self):
         self.tweet.content = 'Baker i Akerselva i Oslo'
@@ -98,7 +98,11 @@ class TestPlaceExtractor(TestCase):
         self.assertEqual(places,  ['Brann', 'Gardermoen'])
 
     def test_it_treats_two_words_as_one_place_if_they_have_a_capital_letter(self):
-        self.tweet.content = 'Melding om brann i Øvre Ullern Terrasse. Nødetater på vei.'
+        self.tweet.content = 'Melding om brann i Øvre Ullern. Nødetater på vei.'
         places = PlaceExtractor(self.tweet).find_potential_places()
-        self.assertEqual(places,  ['Melding', 'Nødetater', 'Øvre Ullern Terrasse'])
+        self.assertEqual(places,  ['Melding', 'Nødetater', 'Øvre Ullern'])
 
+    def test_it_treats_three_words_as_one_place_if_they_have_a_capital_letter(self):
+        self.tweet.content = 'Melding om brann i Øvre Ullern Terrase. Nødetater på vei.'
+        places = PlaceExtractor(self.tweet).find_potential_places()
+        self.assertEqual(places,  ['Melding', 'Nødetater', 'Øvre Ullern Terrase'])

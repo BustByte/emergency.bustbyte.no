@@ -62,47 +62,30 @@ class PlaceExtractor:
 
     @classmethod
     def remove_duplicate_words(cls, words):
-        unique = []
-        return [unique.append(item) for item in words if item not in unique]
+        return list(set(words))
 
-    def merge_words_that_are_next_to_each_other(self, words):
-        print(words)
+    def merge_words_that_are_next_to_each_other(self, places):
+        text = self.tweet.content
 
-        def next_to_each_other(first_word, second_word):
-            return first_word + ' ' + second_word in self.tweet.content 
-
-        def merge_words(first_word, second_word):
-            return first_word + ' ' + second_word
-
-        def get_neighbor(word, words):
+        def get_neighbor(place, places):
             try:
-                return words[words.index(word) + 1]
+                return places[places.index(place) + 1]
             except IndexError:
                 return None
 
-        def merge_dick(words):
-            for index, word in enumerate(words):
-                neighbor = get_neighbor(word, words)
-
-                if index == len(words) - 1:
-                    print("returning ", words)
-                    return words
-
-                if neighbor and next_to_each_other(word, neighbor):
-                    words[index] = merge_words(word, neighbor)
-                    words[index + 1] = ''
-                    break
+        def merge(text, places):
+            for index, place in enumerate(places):
+                neighbor = get_neighbor(place, places)
+                
+                if neighbor and (place + ' ' + neighbor) in text:
+                    places[index] = place + ' ' + neighbor
+                    places.remove(neighbor)
+            return places
 
         while True:
-            merged = merge_dick(words)
-            merged_two = merge_dick(merged)
-            if merged == merged_two:
-                break
-            else:
-                words = merged
-
-        #merged = merge_dick(words)
-        return merged
+            places = merge(text, places)
+            if places == merge(text, places):
+                return places
 
     def find_potential_places(self):
         text = self.tweet.content
