@@ -30,3 +30,12 @@ class Repository:
         row = cur.fetchone()
         tweet = Mapper.to_tweet(row)
         return tweet
+
+    @classmethod
+    def all(cls):
+        cur = Database.connection.cursor()
+        cur.execute('''SELECT * FROM tweets''')
+        Database.connection.commit()
+        rows = cur.fetchall()
+        tweets = [Mapper.to_tweet(row) for row in rows]
+        return tweets

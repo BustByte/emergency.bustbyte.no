@@ -15,7 +15,6 @@ class TestRepository(TestCase):
         self.tweet.user.name = 'rofl'
         self.tweet.timestamp = '2014-01-01 10:10:10'
 
-
     def tearDown(self):
         Database.tear_down()
 
@@ -25,3 +24,9 @@ class TestRepository(TestCase):
         assert stored_tweet.id == '1234'
         assert stored_tweet.content == 'Hello world'
         #assert stored_tweet.user.name == 'rofl'
+
+    def test_it_get_all_the_tweets(self):
+        Repository.create(self.tweet)
+        Repository.create(self.tweet)
+        stored_tweets = Repository.all()
+        assert len(stored_tweets) == 2
