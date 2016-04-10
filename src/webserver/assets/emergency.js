@@ -1,7 +1,6 @@
 // Global map
 var googleMap;
 var markers = [];
-var customMarker = "assets/twitter-marker.png";
 
 // Socket
 var socket = null;
@@ -34,8 +33,7 @@ function addMarker(position){
 	var marker = new google.maps.Marker({
 		position: position,
 		map: googleMap,
-		title: "Hendelse",
-		icon: customMarker
+		title: "Hendelse"
 	});
 	if (! searchState) marker.setAnimation(google.maps.Animation.BOUNCE);
 
