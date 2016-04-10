@@ -40,6 +40,10 @@ class PlaceExtractor:
         return text.replace('/', ' ')
 
     @classmethod
+    def remove_hashtags_and_at_sign(cls, text):
+        return text.replace('@', '').replace('#', '')
+
+    @classmethod
     def remove_words_with_only_capital_letters(cls, words):
         return [word for word in words \
             if not cls.has_only_capital_letters(word)]
@@ -104,6 +108,7 @@ class PlaceExtractor:
             return []
 
         text  = self.separate_words_divided_by_slash(text)
+        text  = self.remove_hashtags_and_at_sign(text)
         words = self.find_words_with_capital_letter(text)
         words = self.remove_words_with_numbers(words)
         words = self.remove_words_with_only_capital_letters(words)

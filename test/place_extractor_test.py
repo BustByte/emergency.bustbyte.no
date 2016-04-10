@@ -121,3 +121,13 @@ class TestPlaceExtractor(TestCase):
         self.tweet.content = 'På Øvre Ullern Terrase er det brann. Nødetater på vei.'
         places = PlaceExtractor(self.tweet).find_potential_places()
         self.assertEqual(places,  ['Øvre Ullern Terrase'])
+
+    def test_it_removes_hashtags(self):
+        self.tweet.content = 'Vi er live fra Oslo. #Rådhusplassen'
+        places = PlaceExtractor(self.tweet).find_potential_places()
+        self.assertEqual(places,  ['Oslo', 'Rådhusplassen'])
+
+    def test_it_removes_at_signs(self):
+        self.tweet.content = 'Vi er live fra @Oslo.'
+        places = PlaceExtractor(self.tweet).find_potential_places()
+        self.assertEqual(places,  ['Oslo'])
