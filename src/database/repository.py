@@ -35,6 +35,24 @@ class Repository:
         return tweet
 
     @classmethod
+    def map_place_to_tweet(cls, tweet_id, place_id):
+        cur = Database.connection.cursor()
+        row = {'tweet_id': tweet_id, 'place_id': place_id}
+        try:
+            row = defaultdict(lambda: None, tweet_row)
+            cur.execute('''
+                INSERT INTO tweet_in_place
+                (tweet_id, place_id) values
+                (:tweet_id, :place_id)''',
+                row 
+            )
+        except sqlite3.IntegrityError:
+            return None
+        Database.connection.commit()
+        return cur.lastrowid
+
+
+    @classmethod
     def search(cls, query_object):
         cur = Database.connection.cursor()
         cur.execute('''SELECT * FROM tweets WHERE content LIKE :query AND timestamp < :end AND timestamp > :start LIMIT 500''',
