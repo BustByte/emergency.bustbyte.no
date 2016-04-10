@@ -45,3 +45,8 @@ class TestMapper(TestCase):
         row = {'timestamp': '2013-08-13 11:00:13'}
         tweet = Mapper.to_tweet(row)
         self.assertEqual(tweet.timestamp, datetime(2013, 8, 13, 11, 0, 13))
+
+    def test_it_can_map_a_tweet_with_messed_up_timestamp(self):
+        row = {'timestamp': 'Tzo4OiJzdGRDbGFzcyI6Mzp7czo0OiJ1cmxzIjthOjA6e31zOjEzOiJ1c2VyX21lbnRpb25zIjthOjA6e31zOjg6Imhhc2h0YWdzIjthOjA6e319'}
+        tweet = Mapper.to_tweet(row)
+        self.assertEqual(tweet.timestamp, None)

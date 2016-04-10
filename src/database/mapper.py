@@ -32,6 +32,13 @@ class Mapper:
             tweet.content = row['content']
 
         if 'timestamp' in row.keys():
-            tweet.timestamp = datetime.strptime(row['timestamp'], '%Y-%m-%d %H:%M:%S')  \
+            tweet.timestamp = cls.convert_timestamp(row['timestamp'])
 
         return tweet
+
+    @classmethod
+    def convert_timestamp(cls, timestamp):
+        try:
+            return datetime.strptime(timestamp, '%Y-%m-%d %H:%M:%S')
+        except ValueError:
+            return None
