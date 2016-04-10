@@ -19,7 +19,7 @@ class TestScorer(TestCase):
         self.assertGreater(aas_score, university_score)
 
     def test_word_following_a_comma_has_a_greater_score_than_one_that_is_not(self):
-        self.tweet.content = 'Trondheim, Tiller har supporterne til Brann gjort opprør.'
+        self.tweet.content = 'Trondheim, Tiller har Brann supporterne gjort opprør.'
         brann_score = ScoreCalculator(self.tweet).for_word('Brann')
         tiller_score = ScoreCalculator(self.tweet).for_word('Tiller')
         self.assertLess(brann_score, tiller_score)
@@ -31,13 +31,25 @@ class TestScorer(TestCase):
         self.assertEqual(tiller_score, trondheim_score)
 
     def test_a_word_in_start_of_sentence_has_greater_score_than_one_that_is_not(self):
-        self.tweet.content = 'Det regner i Trondheim. Tiller har det verst.'
-        tiller_score = ScoreCalculator(self.tweet).for_word('Tiller')
-        trondheim_score = ScoreCalculator(self.tweet).for_word('Trondheim')
-        self.assertGreater(tiller_score, trondheim_score)
+        self.tweet.content = 'Brann og Redningsetaten er på vei. Oslo er folksomt nå.'
+        oslo_score = ScoreCalculator(self.tweet).for_word('Oslo')
+        redningsetaten_score = ScoreCalculator(self.tweet).for_word('Redningsetaten')
+        self.assertGreater(oslo_score, redningsetaten_score)
 
     def test_a_word_in_start_of_tweet_has_greater_score_than_one_that_is_not(self):
         self.tweet.content = 'Trondheim har mye regn og det har Tiller også.'
+        tiller_score = ScoreCalculator(self.tweet).for_word('Tiller')
+        trondheim_score = ScoreCalculator(self.tweet).for_word('Trondheim')
+        self.assertGreater(trondheim_score, tiller_score)
+
+    def test_a_word_followed_by_a_preposition_is_given_a_higher_score_than_one_that_is_not(self):
+        self.tweet.content = 'Tyveri i Trondheim. Kanskje også Tiller.'
+        tiller_score = ScoreCalculator(self.tweet).for_word('Tiller')
+        trondheim_score = ScoreCalculator(self.tweet).for_word('Trondheim')
+        self.assertGreater(trondheim_score, tiller_score)
+
+    def test_a_word_followed_by_a_uppercased_preposition_is_given_a_higher_score_than_one_that_is_not(self):
+        self.tweet.content = 'I Trondheim. Kanskje også Tiller.'
         tiller_score = ScoreCalculator(self.tweet).for_word('Tiller')
         trondheim_score = ScoreCalculator(self.tweet).for_word('Trondheim')
         self.assertGreater(trondheim_score, tiller_score)
