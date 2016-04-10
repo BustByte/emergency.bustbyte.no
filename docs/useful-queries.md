@@ -16,5 +16,15 @@ SELECT districts.name, communes.name, places.name FROM places
 ### All tweets containing "kniv"
 ````sql
 SELECT content FROM tweets
-	WHERE content LIKE "%kniv%
+	WHERE content LIKE "%kniv%"
+````
+
+### All places within the district of a Twitter user
+````sql
+SELECT DISTINCT places.id, places.commune_id, places.name, communes.name FROM users
+    JOIN districts on users.district = districts.id
+    JOIN commune_in_district on districts.id = commune_in_district.district_id
+    JOIN communes on commune_in_district.commune_id = communes.id
+    JOIN places on communes.id = places.commune_id
+    WHERE users.username = 'opsenfollo';
 ````
