@@ -158,8 +158,7 @@ $(document).ready(function (){
 		socket.onmessage = function(e) {
 			var tweets = JSON.parse(e.data);
 			for (var x in tweets['tweets']){
-				//if (typeof tweets['tweets'][x].position !== 'undefined')
-				if (Math.round(Math.random()))
+				if (typeof tweets['tweets'][x].position !== 'undefined')
 					addPositionalTweet(tweets['tweets'][x].id, tweets['tweets'][x].position);
 				else
 					addTweetToList(tweets['tweets'][x].id);
