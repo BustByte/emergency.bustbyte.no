@@ -1,5 +1,6 @@
 from database import Mapper
 from database import Database
+from place import Place
 import sqlite3
 from collections import defaultdict
 
@@ -56,3 +57,20 @@ class Repository:
         rows = cur.fetchall()
         tweets = [Mapper.to_tweet(row) for row in rows]
         return tweets
+
+    @classmethod
+    def read_places(cls, username):
+        cur = Database.connection.cursor()
+        cur.execute('''SELECT DISTINCT places.id AS id, places.name AS name, FROM users
+            JOIN districts on users.district = districts.id
+            JOIN commune_in_district on districts.id = commune_in_district.district_id
+            JOIN communes on commune_in_district.commune_id = communes.id
+            JOIN places on communes.id = places.commune_id
+            WHERE users.username = ':username';''', {
+                'username': username
+            }
+        )
+        Database.connection.commit()
+        rows = cur.fetchall()
+        places = [Mapper.to_place(row) for row in rows]
+        return places
