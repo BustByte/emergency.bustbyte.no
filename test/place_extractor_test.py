@@ -136,3 +136,8 @@ class TestPlaceExtractor(TestCase):
         self.tweet.content = 'Storbrann i Sandgt. 28.'
         places = PlaceExtractor(self.tweet).find_potential_places()
         self.assertEqual(places,  ['Sandgata', 'Storbrann'])
+
+    def test_it_ignores_words_with_symbols_as_first_letter(self):
+        self.tweet.content = 'Storbrann på "i Sandgt. 28.'
+        places = PlaceExtractor(self.tweet).find_potential_places()
+        self.assertEqual(places,  ['Sandgata', 'Storbrann'])
