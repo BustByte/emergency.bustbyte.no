@@ -5,8 +5,10 @@ from locator import ScoreCalculator
 tweets = Repository.all()
 
 for tweet in tweets:
-    print(tweet.content)
+    print(tweet.content, "\n")
     places = PlaceExtractor(tweet).find_potential_places()
     for place in places:
         score = ScoreCalculator(tweet).for_word(place)
-        print(place, score, "\n\n")
+        print(place, score)
+
+    print("\n\n")
