@@ -41,3 +41,6 @@ CREATE TABLE `tweet_in_place` (
     FOREIGN KEY(tweet_id) REFERENCES tweets(id),
     FOREIGN KEY(place_id) REFERENCES places(id)
 );
+
+INSERT INTO users (username, district) VALUES ('opsenoslo', 1);
+INSERT INTO districts (id, name) VALUES (1, 'Oslo');

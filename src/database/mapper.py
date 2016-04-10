@@ -1,5 +1,6 @@
 from user import User
 from tweet import Tweet
+from position import Position
 from datetime import datetime
 
 class Mapper:
@@ -26,6 +27,7 @@ class Mapper:
     def to_tweet(cls, row):
         tweet = Tweet()
         tweet.user = User()
+        tweet.position = Position()
 
         if 'id' in row.keys():
             tweet.id = row['id']
@@ -41,6 +43,12 @@ class Mapper:
 
         if 'name' in row.keys():
             tweet.user.name = row['name']
+
+        if 'latitude' in row.keys():
+            tweet.position.latitude = row['latitude']
+
+        if 'longitude' in row.keys():
+            tweet.position.longitude = row['longitude']
 
         return tweet
 
