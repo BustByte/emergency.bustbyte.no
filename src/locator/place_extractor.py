@@ -62,19 +62,60 @@ class PlaceExtractor:
 
     @classmethod
     def remove_duplicate_words(cls, words):
-        return list(set(words))
+        unique = []
+        return [unique.append(item) for item in words if item not in unique]
+
+    def merge_words_that_are_next_to_each_other(self, words):
+        print(words)
+
+        def next_to_each_other(first_word, second_word):
+            return first_word + ' ' + second_word in self.tweet.content 
+
+        def merge_words(first_word, second_word):
+            return first_word + ' ' + second_word
+
+        def get_neighbor(word, words):
+            try:
+                return words[words.index(word) + 1]
+            except IndexError:
+                return None
+
+        def merge_dick(words):
+            for index, word in enumerate(words):
+                neighbor = get_neighbor(word, words)
+
+                if index == len(words) - 1:
+                    print("returning ", words)
+                    return words
+
+                if neighbor and next_to_each_other(word, neighbor):
+                    words[index] = merge_words(word, neighbor)
+                    words[index + 1] = ''
+                    break
+
+        while True:
+            merged = merge_dick(words)
+            merged_two = merge_dick(merged)
+            if merged == merged_two:
+                break
+            else:
+                words = merged
+
+        #merged = merge_dick(words)
+        return merged
 
     def find_potential_places(self):
-        text  = self.tweet.content
+        text = self.tweet.content
         if text == '':
             return []
 
         text  = self.separate_words_divided_by_slash(text)
         words = self.find_words_with_capital_letter(text)
-        words = self.find_words_with_capital_letter(text)
         words = self.remove_words_with_numbers(words)
         words = self.remove_words_with_only_capital_letters(words)
         words = self.remove_short_words(words)
         words = self.remove_trailing_symbols(words)
+        words = self.merge_words_that_are_next_to_each_other(words)
         words = self.remove_duplicate_words(words)
-        return sorted(words)
+        words = sorted(words)
+        return words

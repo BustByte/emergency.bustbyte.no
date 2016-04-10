@@ -80,7 +80,7 @@ class TestPlaceExtractor(TestCase):
     def test_it_finds_words_with_colon(self):
         self.tweet.content = '23:14: Oslo, Bjørvika: Hei Akerselva: i: Oslo'
         places = PlaceExtractor(self.tweet).find_potential_places()
-        self.assertEqual(places,  ['Akerselva', 'Bjørvika', 'Hei', 'Oslo'])
+        self.assertEqual(places,  ['Bjørvika', 'Hei Akerselva', 'Oslo'])
 
     def test_it_finds_first_word_with_colon(self):
         self.tweet.content = 'Bjørvika: Angrep mann i 20-årene. Oslo: hei.'
@@ -96,3 +96,9 @@ class TestPlaceExtractor(TestCase):
         self.tweet.content = 'Brann i bil v/Gardermoen.'
         places = PlaceExtractor(self.tweet).find_potential_places()
         self.assertEqual(places,  ['Brann', 'Gardermoen'])
+
+    def test_it_treats_two_words_as_one_place_if_they_have_a_capital_letter(self):
+        self.tweet.content = 'Melding om brann i Øvre Ullern Terrasse. Nødetater på vei.'
+        places = PlaceExtractor(self.tweet).find_potential_places()
+        self.assertEqual(places,  ['Melding', 'Nødetater', 'Øvre Ullern Terrasse'])
+
