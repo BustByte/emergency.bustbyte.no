@@ -1,55 +1,43 @@
+import os
 import sqlite3
+from collections import defaultdict
 from config import configuration
 
-class Database:
-
+def get_connection():
     connection = sqlite3.connect(
+        ':memory:' if os.environ['TEST'] else
         configuration['database']['location'],
         check_same_thread=False,
         detect_types=sqlite3.PARSE_DECLTYPES|sqlite3.PARSE_COLNAMES
     )
+    connection.row_factory = sqlite3.Row
+    return connection
+
+class Database:
+
+    connection = get_connection()
+
+    @classmethod
+    def run_schema(cls, schema):
+        cur = Database.connection.cursor()
+        current_directory = os.path.dirname(os.path.realpath(__file__))
+        with open(current_directory + '/schemas/' + schema, 'r') as schema:
+            sql = schema.read()
+        cur.executescript(sql)
+        Database.connection.commit()
 
     @classmethod
     def setup(cls):
-        Database.connection.row_factory = sqlite3.Row
-        cur = Database.connection.cursor()
-        cur.execute('''create table if not exists tweets(
-            id text primary key,
-            username text,
-            name text,
-            content text,
-            timestamp text
-        )''')
+        cls.run_schema('setup.sql')
 
     @classmethod
-    def save_all(cls, tweets):
-        for tweet in tweets:
-            cls.save(tweet)
+    def tear_down(cls):
+        Database.connection = get_connection()
 
     @classmethod
-    def save(cls, tweet):
+    def table_exists(cls, name):
         cur = Database.connection.cursor()
-        try:
-            cur.execute('''
-                insert into tweets values (
-                    :id,
-                    :username,
-                    :name,
-                    :content,
-                    :timestamp
-                )''', cls.to_row(tweet))
-        except sqlite3.IntegrityError:
-            #print('Already stored %s. Skipping.' % tweet.id)
-            return None
+        cur.execute('''SELECT name FROM sqlite_master;''')
         Database.connection.commit()
-        return cur.lastrowid
-
-    @classmethod
-    def to_row(cls, tweet):
-        row = {}
-        row['id'] = tweet.id
-        row['content'] = tweet.content
-        row['timestamp'] = tweet.timestamp
-        row['username'] = tweet.user.username
-        row['name'] = tweet.user.name
-        return row 
+        returned = cur.fetchone()
+        return returned is not None
