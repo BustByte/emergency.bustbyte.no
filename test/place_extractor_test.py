@@ -101,3 +101,18 @@ class TestPlaceExtractor(TestCase):
         self.tweet.content = 'Brann I bil Noen Slåsskamp Politi Gardermoen.'
         places = PlaceExtractor(self.tweet).find_potential_places()
         self.assertEqual(places,  ['Gardermoen'])
+
+    def test_it_treats_two_words_as_one_place_if_they_have_a_capital_letter(self):
+        self.tweet.content = 'Melding om brann i Øvre Ullern. Nødetater på vei.'
+        places = PlaceExtractor(self.tweet).find_potential_places()
+        self.assertEqual(places,  ['Øvre Ullern'])
+
+    def test_it_treats_three_words_as_one_place_if_they_have_a_capital_letter(self):
+        self.tweet.content = 'Melding om brann i Øvre Ullern Terrase. Nødetater på vei.'
+        places = PlaceExtractor(self.tweet).find_potential_places()
+        self.assertEqual(places,  ['Øvre Ullern Terrase'])
+
+    def test_it_removes_stop_words_before_merging_places_consisting_of_multiple_capitalized_words(self):
+        self.tweet.content = 'På Øvre Ullern Terrase er det brann. Nødetater på vei.'
+        places = PlaceExtractor(self.tweet).find_potential_places()
+        self.assertEqual(places,  ['Øvre Ullern Terrase'])
