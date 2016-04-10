@@ -42,11 +42,11 @@ class TestScorer(TestCase):
         redningsetaten_score = ScoreCalculator(self.tweet).for_word('Redningsetaten')
         self.assertLess(oslo_score, redningsetaten_score)
 
-    def test_a_word_in_start_of_tweet_has_greater_score_than_one_that_is_not(self):
+    def test_a_word_in_middle_of_sentence_has_higher_score_than_one_that_is_at_the_start_of_the_sentence(self):
         self.tweet.content = 'Trondheim har mye regn og det har Tiller også.'
         tiller_score = ScoreCalculator(self.tweet).for_word('Tiller')
         trondheim_score = ScoreCalculator(self.tweet).for_word('Trondheim')
-        self.assertEqual(trondheim_score, tiller_score)
+        self.assertLess(trondheim_score, tiller_score)
 
     def test_a_word_followed_by_a_preposition_is_given_a_higher_score_than_one_that_is_not(self):
         self.tweet.content = 'Tyveri i Trondheim. Kanskje også Tiller.'
