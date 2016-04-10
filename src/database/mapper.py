@@ -1,3 +1,4 @@
+from user import User
 from tweet import Tweet
 from datetime import datetime
 
@@ -9,7 +10,7 @@ class Mapper:
 
         row['id'] = tweet.id
 
-        row['user'] = tweet.user.username \
+        row['username'] = tweet.user.username \
             if tweet.user else None
 
         row['name'] = tweet.user.name \
@@ -24,6 +25,7 @@ class Mapper:
     @classmethod
     def to_tweet(cls, row):
         tweet = Tweet()
+        tweet.user = User()
 
         if 'id' in row.keys():
             tweet.id = row['id']
@@ -33,6 +35,12 @@ class Mapper:
 
         if 'timestamp' in row.keys():
             tweet.timestamp = cls.convert_timestamp(row['timestamp'])
+
+        if 'username' in row.keys():
+            tweet.user.username = row['username']
+
+        if 'name' in row.keys():
+            tweet.user.name = row['name']
 
         return tweet
 
