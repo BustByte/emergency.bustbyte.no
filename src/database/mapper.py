@@ -1,5 +1,6 @@
 from user import User
 from tweet import Tweet
+from place import Place
 from position import Position
 from datetime import datetime
 
@@ -51,6 +52,18 @@ class Mapper:
             tweet.position.longitude = row['longitude']
 
         return tweet
+
+    @classmethod
+    def to_place(cls, row):
+        place = Place()
+
+        if 'id' in row.keys():
+            place.id = row['id']
+
+        if 'name' in row.keys():
+            place.name = row['name']
+
+        return place
 
     @classmethod
     def convert_timestamp(cls, timestamp):
