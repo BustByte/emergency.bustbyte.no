@@ -1,6 +1,6 @@
 class Position:
 
-    def __init__(self, latitude, longitude):
+    def __init__(self, latitude=None, longitude=None):
         self.latitude = latitude
         self.longitude = longitude
 

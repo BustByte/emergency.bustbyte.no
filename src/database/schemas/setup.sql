@@ -34,3 +34,13 @@ CREATE TABLE `commune_in_district` (
 	FOREIGN KEY(`commune_id`) REFERENCES `communes`(`id`),
 	FOREIGN KEY(`district_id`) REFERENCES `districts`(`id`)
 );
+
+CREATE TABLE `tweet_in_place` (
+    `tweet_id`  INTEGER NOT NULL,
+    `place_id`  INTEGER NOT NULL,
+    FOREIGN KEY(tweet_id) REFERENCES tweets(id),
+    FOREIGN KEY(place_id) REFERENCES places(id)
+);
+
+INSERT INTO users (username, district) VALUES ('opsenoslo', 1);
+INSERT INTO districts (id, name) VALUES (1, 'Oslo');

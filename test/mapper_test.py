@@ -36,6 +36,12 @@ class TestMapper(TestCase):
         tweet = Mapper.to_tweet(row)
         self.assertEqual(tweet.content, 'Mye kriminalitet i sentrum.')
 
+    def test_it_maps_latitude_and_longitude_to_tweet(self):
+        row = {'latitude': '59.5588585', 'longitude': '10.443423'}
+        tweet = Mapper.to_tweet(row)
+        self.assertEqual(tweet.position.latitude, '59.5588585')
+        self.assertEqual(tweet.position.longitude, '10.443423')
+
     def test_it_maps_username_to_user(self):
         row = {'username': 'oslopoliti'}
         tweet = Mapper.to_tweet(row)

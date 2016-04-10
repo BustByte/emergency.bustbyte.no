@@ -3,6 +3,7 @@ from unittest.mock import MagicMock
 from database import Database, Repository 
 from user import User
 from tweet import Tweet
+from position import Position
 
 class TestRepository(TestCase):
 
@@ -13,11 +14,16 @@ class TestRepository(TestCase):
         self.user.name = 'Oslo Operasjonssentral'
         self.user.username = 'opsenoslo'
 
+        self.position = Position()
+        self.position.latitude = '59.47437473'
+        self.position.longitude = '10.4557473'
+
         self.tweet = Tweet()
         self.tweet.id = '1234'
         self.tweet.user = self.user
         self.tweet.content = 'Hello world'
         self.tweet.timestamp = '2014-01-01 10:10:10'
+        self.tweet.position = self.position
 
     def tearDown(self):
         Database.tear_down()
