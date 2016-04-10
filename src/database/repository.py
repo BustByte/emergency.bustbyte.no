@@ -35,6 +35,21 @@ class Repository:
         return tweet
 
     @classmethod
+    def search(cls, query_object):
+        cur = Database.connection.cursor()
+        cur.execute('''SELECT * FROM tweets WHERE content LIKE :query AND timestamp < :end AND timestamp > :start LIMIT 500''',
+            {
+                'query': '% {0} %'.format(query_object.get('query')),
+                'end'  : query_object.get('endDate'),
+                'start': query_object.get('startDate')
+            }
+        )
+        Database.connection.commit()
+        rows = cur.fetchall()
+        tweets = [Mapper.to_tweet(row) for row in rows]
+        return tweets
+
+    @classmethod
     def all(cls):
         cur = Database.connection.cursor()
         cur.execute('''SELECT * FROM tweets LIMIT 200''')

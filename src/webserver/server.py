@@ -8,6 +8,8 @@ from twisted.web.server import Site
 from twisted.web.static import File
 
 from listeners.twitter_listener import *
+from database.repository import Repository
+from tweet.json_generator import Json
 
 from multiprocessing import Process, Pipe
 
@@ -24,9 +26,6 @@ class BroadcastServerProtocol(WebSocketServerProtocol):
     def onMessage(self, payload, isBinary):
         if not isBinary:
             query = json.loads(payload.decode('utf8'))
-            print(query.get('query'))
-            print(query.get('start'))
-            print(query.get('end'))
             self.factory.search(query, self)
 
     def connectionLost(self, reason):
@@ -75,11 +74,13 @@ class BroadcastServerFactory(WebSocketServerFactory):
         self.unregister(client)
         # SEARCH IN DATABASE HERE BASED ON QUERY (searchString, startDate, endDate).
         # Return a maximum number to avoid overfilling the map?
-        
+        tweets = Repository.search(query)
+        json_tweets = Json.generate_json(tweets)
+
         lat = random.uniform(58.1, 70.1)
         lng = random.uniform(4.6, 30.1)
         tweet_id = "508967802481704960"
-        client.sendMessage(json.dumps({'tweets': [{'position': {'lat': lat, 'lng': lng}, 'id': tweet_id}]}).encode('utf8'))
+        client.sendMessage(json.dumps({'tweets': json_tweets}).encode('utf8'))
 
 
 def listen_for_tweets(child_process):
