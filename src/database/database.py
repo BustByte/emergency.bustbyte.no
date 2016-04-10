@@ -1,14 +1,17 @@
 import os
 import sqlite3
+from collections import defaultdict
 from config import configuration
 
 def get_connection():
-    return sqlite3.connect(
+    connection = sqlite3.connect(
         ':memory:' if os.environ['TEST'] else
         configuration['database']['location'],
         check_same_thread=False,
         detect_types=sqlite3.PARSE_DECLTYPES|sqlite3.PARSE_COLNAMES
     )
+    connection.row_factory = sqlite3.Row
+    return connection
 
 class Database:
 
@@ -38,17 +41,3 @@ class Database:
         Database.connection.commit()
         returned = cur.fetchone()
         return returned is not None
-
-    @classmethod
-    def create(cls, tweet):
-        cur = Database.connection.cursor()
-        try:
-            cur.execute('''insert into tweets
-                (id, username, name, content, timestamp) values
-                (:id, :username, :name, :content, :timestamp)''',
-                cls.to_row(tweet)
-            )
-        except sqlite3.IntegrityError:
-            return None
-        Database.connection.commit()
-        return cur.lastrowid
