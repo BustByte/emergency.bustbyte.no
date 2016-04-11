@@ -3,3 +3,4 @@ Twisted==16.0.0
 python_twitter==3.0rc1
 twitter==1.17.1
 pytz==2016.3
+requests==2.9.1
