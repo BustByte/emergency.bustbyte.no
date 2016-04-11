@@ -10,6 +10,7 @@ from twisted.web.static import File
 from listeners.twitter_listener import *
 from database.repository import Repository
 from tweet.json_generator import Json
+from processor import Processor
 
 from multiprocessing import Process, Pipe
 
@@ -37,21 +38,24 @@ class BroadcastServerFactory(WebSocketServerFactory):
 
     def __init__(self, url, twitter_process):
         WebSocketServerFactory.__init__(self, url)
+        print("Booting tweet processor...")
+        self.processor = Processor()
+        print("Tweet processor successfully booted")
         self.clients = []
         self.twitter_process = twitter_process
         self.check_for_tweets()
 
     def check_for_tweets(self):
         if (self.twitter_process.poll()):
-            print("lol")
-            tweet = self.twitter_process.recv()
-            json_tweet = Json.generate_json([tweet])
-            print("received tweet", json_tweet)
-            self.broadcast(json.dumps({'tweets': json_tweet}))
-            print("Broadcasting %s to %d clients" % (tweet, len(self.clients)))
+            self.save_and_broadcast_tweet(self.twitter_process.recv())
         # Check for new tweets every second
         reactor.callLater(1, self.check_for_tweets)
 
+    def save_and_broadcast_tweet(self, tweet):
+        position_tweet = self.processor.process(tweet)
+        json_tweet = Json.generate_json([position_tweet])
+        self.broadcast(json.dumps({'tweets': json_tweet}))
+        print("Broadcasting %s to %d clients" % (position_tweet, len(self.clients)))
 
     def register(self, client):
         if client not in self.clients:

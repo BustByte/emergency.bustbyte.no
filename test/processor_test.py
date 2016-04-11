@@ -29,13 +29,13 @@ class TestProcessor(TestCase):
 
     def test_processor_creates_a_tweet_in_the_database(self):
         processor = Processor()
-        processor.process(self.tweet)  
+        processor.process(self.tweet)
         stored_tweet = Repository.read('4321')
         assert stored_tweet.id == '4321'
 
     def test_processor_adds_a_position_to_the_tweet(self):
         processor = Processor()
-        stored_tweet = processor.process(self.tweet)  
+        stored_tweet = processor.process(self.tweet)
         assert stored_tweet.position.latitude != None
         assert stored_tweet.position.longitude != None
 
