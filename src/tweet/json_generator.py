@@ -10,7 +10,7 @@ class Json:
             json_tweet = {
                 'id': tweet.id
             }
-            if tweet.position != None:
+            if tweet.position.latitude != None and tweet.position.longitude != None:
                 json_tweet['position'] = {
                     'lat': float(tweet.position.latitude),
                     'lng': float(tweet.position.longitude)
