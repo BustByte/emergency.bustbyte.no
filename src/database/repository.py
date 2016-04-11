@@ -86,7 +86,7 @@ class Repository:
     def all_users_with_places(cls):
         cache = {}
         cur = Database.connection.cursor()
-        cur.execute('''SELECT username, places.id AS id, places.name AS name FROM users
+        cur.execute('''SELECT username, communes.name as commune_name, places.id AS id, places.name AS place_name FROM users
             JOIN districts on users.district = districts.id
             JOIN commune_in_district on districts.id = commune_in_district.district_id
             JOIN communes on commune_in_district.commune_id = communes.id

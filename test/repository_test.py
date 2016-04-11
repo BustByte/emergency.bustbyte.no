@@ -50,3 +50,4 @@ class TestRepository(TestCase):
         Repository.create(self.tweet)
         places = Repository.all_users_with_places()
         self.assertIn('opsenoslo', places)
+        self.assertEqual(places['opsenoslo']['Vestby'].commune_name, 'Oslo Kommune')
