@@ -1,6 +1,6 @@
 from database import Mapper
 from database import Database
-from place import Place
+from position import Place
 import sqlite3
 from collections import defaultdict
 
@@ -38,7 +38,10 @@ class Repository:
     @classmethod
     def search(cls, query_object):
         cur = Database.connection.cursor()
-        cur.execute('''SELECT * FROM tweets WHERE content LIKE :query AND timestamp < :end AND timestamp > :start LIMIT 500''',
+        cur.execute('''SELECT * FROM tweets
+            JOIN tweet_in_place ON tweet_in_place.tweet_id = tweets.id
+            JOIN places ON tweet_in_place.place_id = places.id
+            WHERE content LIKE :query AND timestamp < :end AND timestamp > :start LIMIT 500''',
             {
                 'query': '% {0} %'.format(query_object.get('query')),
                 'end'  : query_object.get('endDate'),
@@ -62,7 +65,7 @@ class Repository:
     @classmethod
     def read_places(cls, username):
         cur = Database.connection.cursor()
-        cur.execute('''SELECT DISTINCT places.id AS id, places.name AS name, FROM users
+        cur.execute('''SELECT places.id AS id, places.name AS place_name, communes.name AS commune_name FROM users
             JOIN districts on users.district = districts.id
             JOIN commune_in_district on districts.id = commune_in_district.district_id
             JOIN communes on commune_in_district.commune_id = communes.id
