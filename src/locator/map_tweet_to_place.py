@@ -25,16 +25,19 @@ for index, tweet in enumerate(tweets):
     actual_communes = communes[username]
     actual_place = None
 
+    # Iterate over all the potential places by score to find commune
+    for potential_place, score in sorted_scores:
+        potential_commune = potential_place
+        if potential_commune in actual_communes:
+            print("Avgrenser til kommune:", potential_commune)
+            actual_places = actual_communes[potential_place]
+
+            # We found a commune, do not look for any more
+            break
+
     # Iterate over all the potential places by score
     for potential_place, score in sorted_scores:
 
-        # Check if there exists a commune with the same name as the place
-        potential_commune = potential_place
-        if potential_commune in actual_communes:
-
-            # Limit all places to that commune
-            actual_places = actual_communes[potential_place]
-        
         # Check if the potential place is in the actual places
         if potential_place in actual_places:
             actual_place = actual_places[potential_place]
@@ -43,6 +46,6 @@ for index, tweet in enumerate(tweets):
             # We found a place, so lets move on to the next weet
             break
 
-    print("TWEET NUMBER:", index)
-    print(sorted_scores)
-    print("\n\n")
+    #print("TWEET NUMBER:", index)
+    #print(sorted_scores)
+    #print("\n\n")

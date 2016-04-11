@@ -98,14 +98,14 @@ class Repository:
         for row in rows:
             place = Mapper.to_place(row)
 
-            if row['commune_name'] not in commune_cache:
-                commune_cache[row['username']] = {}
-
-                if place.commune_name not in commune_cache[row['username']]:
-                    commune_cache[row['username']][place.commune_name] = {}
-
             if row['username'] not in place_cache:
                 place_cache[row['username']] = {}
+
+            if row['username'] not in commune_cache:
+                commune_cache[row['username']] = {}
+
+            if row['commune_name'] not in commune_cache[row['username']]:
+                commune_cache[row['username']][row['commune_name']] = {}
 
             place_cache[row['username']][place.name] = place
             commune_cache[row['username']][place.commune_name][place.name] = place
