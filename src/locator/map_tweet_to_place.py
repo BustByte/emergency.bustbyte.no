@@ -1,50 +1,34 @@
 import operator
 from database import Repository
-from tweet import Tweet
 from locator import PlaceExtractor, ScoreCalculator
+from tweet import Tweet
 
 tweets = Repository.all()
-districts = {}
+places = Repository.all_users_with_places()
+
+def get_potential_places(tweet)
+    scores = {}
+    potential_places = PlaceExtractor(tweet).find_potential_places()
+
+    for potential_place in potential_places:
+        score = ScoreCalculator(tweet).for_word(potential_place)
+        scores[potential_place] = score
+    sorted_scores = sorted(scores.items(), reverse=True, key=lambda score: score[1])
+
+    return sorted_scores
 
 for tweet in tweets:
 
-    places = PlaceExtractor(tweet).find_potential_places()
-    scores = {}
+    username = tweet.user.username
+    sorted_scores = get_potential_places(tweet)
 
-    for place in places:
-        score = ScoreCalculator(tweet).for_word(place)
-        scores[place] = score
+    for potential_place, score in sorted_scores:
 
-    sorted_scores = sorted(scores.items(), reverse=True, key=lambda score: score[1])
+        if potential_place in places[username]:
+            place = places[username][potential_place]
+            Repository.map_place_to_tweet(tweet.id, place.id) 
 
-    for sorted_score in sorted_scores:
-
-        tweet_place = sorted_score[0]
-        username = tweet.user.username
-        
-        if username in districts:
-            print("hit the cache", username)
-            places = districts[username]
-        else:
-            print("missed the cache", username)
-            eirik_places = Repository.read_places(username)
-            quick_places = {}
-
-            for eirik_place in eirik_places:
-                quick_places[eirik_place.name] = eirik_place
-            
-            districts[username] = quick_places
-
-            places = districts[username]
-
-        if place in places:
-            place = places[place]
-            if place.name == tweet_place:
-                Repository.map_place_to_tweet(tweet.id, place.id) 
-
-                # Move on to next tweet
-                break
+            break # Move on to next tweet
 
     print(scores)
-
     print("\n\n")

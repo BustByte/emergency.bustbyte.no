@@ -81,6 +81,28 @@ class Repository:
         return tweets
 
     @classmethod
+    def all_users_with_places(cls):
+        cache = {}
+        cur = Database.connection.cursor()
+        cur.execute('''SELECT username, places.id AS id, places.name AS name FROM users
+            JOIN districts on users.district = districts.id
+            JOIN commune_in_district on districts.id = commune_in_district.district_id
+            JOIN communes on commune_in_district.commune_id = communes.id
+            JOIN places on communes.id = places.commune_id'''
+        )
+        Database.connection.commit()
+        rows = cur.fetchall()
+        
+        for row in rows:
+            if row['username'] not in cache:
+                cache[row['username']] = {}
+
+            place = Mapper.to_place(row)
+            cache[row['username']][place.name] = place
+
+        return cache
+
+    @classmethod
     def read_places(cls, username):
         cur = Database.connection.cursor()
         cur.execute('''SELECT DISTINCT places.id AS id, places.name AS name FROM users

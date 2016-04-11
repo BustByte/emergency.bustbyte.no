@@ -45,3 +45,8 @@ class TestRepository(TestCase):
         Repository.create(self.tweet)
         stored_tweets = Repository.all()
         assert len(stored_tweets) == 2
+
+    def test_it_can_return_all_the_places_by_username(self):
+        Repository.create(self.tweet)
+        places = Repository.all_users_with_places()
+        self.assertIn('opsenoslo', places)
