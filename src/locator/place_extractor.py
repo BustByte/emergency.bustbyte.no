@@ -137,4 +137,5 @@ class PlaceExtractor:
         words = self.merge_words_that_are_next_to_each_other(words)
         words = self.remove_duplicate_words(words)
         words = sorted(words)
+
         return words
