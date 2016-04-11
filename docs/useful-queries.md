@@ -40,3 +40,9 @@ SELECT * from tweets
 ````sql
 DELETE FROM tweet_in_place
 ````
+
+### Check if it only exist one place for each tweet
+````sql
+SELECT COUNT(DISTINCT tweet_id) AS place FROM tweet_in_place;
+SELECT COUNT(*) FROM tweet_in_place;
+````
