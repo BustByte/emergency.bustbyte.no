@@ -8,11 +8,13 @@ class Json:
         json_tweets = []
         for tweet in tweets:
             json_tweet = {
-                'position': {
-                    'lat': float(tweet.position.latitude),
-                    'lng': float(tweet.position.longitude)
-                },
                 'id': tweet.id
             }
+            if tweet.position != None:
+                json_tweet['position'] = {
+                    'lat': float(tweet.position.latitude),
+                    'lng': float(tweet.position.longitude)
+                }
             json_tweets.append(json_tweet)
+
         return json_tweets
