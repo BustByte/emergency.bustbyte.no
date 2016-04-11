@@ -27,7 +27,10 @@ class BroadcastServerProtocol(WebSocketServerProtocol):
     def onMessage(self, payload, isBinary):
         if not isBinary:
             query = json.loads(payload.decode('utf8'))
-            self.factory.search(query, self)
+            if query.type == 'category':
+                pass
+            else if query.type == 'search':
+                self.factory.search(query, self)
 
     def connectionLost(self, reason):
         WebSocketServerProtocol.connectionLost(self, reason)
