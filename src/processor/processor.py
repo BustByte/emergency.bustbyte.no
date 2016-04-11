@@ -1,4 +1,3 @@
-import operator
 from database import Repository
 from locator import PlaceExtractor, ScoreCalculator
 from tweet import Tweet
