@@ -43,8 +43,10 @@ class BroadcastServerFactory(WebSocketServerFactory):
 
     def check_for_tweets(self):
         if (self.twitter_process.poll()):
+            print("lol")
             tweet = self.twitter_process.recv()
             json_tweet = Json.generate_json([tweet])
+            print("received tweet", json_tweet)
             self.broadcast(json.dumps({'tweets': json_tweet}))
             print("Broadcasting %s to %d clients" % (tweet, len(self.clients)))
         # Check for new tweets every second

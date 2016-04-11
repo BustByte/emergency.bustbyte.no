@@ -5,7 +5,6 @@ from tweet import Tweet
 class Processor:
 
     def __init__(self):
-        self.tweets = Repository.all()
         self.communes, self.places = \
             Repository.all_users_with_places()
 
