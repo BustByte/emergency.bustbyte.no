@@ -44,12 +44,8 @@ class BroadcastServerFactory(WebSocketServerFactory):
     def check_for_tweets(self):
         if (self.twitter_process.poll()):
             tweet = self.twitter_process.recv()
-
-            # Use random coordinates until we can get coords from db.
-            lat = random.uniform(58.1, 70.1)
-            lng = random.uniform(4.6, 30.1)
-
-            self.broadcast(json.dumps({'tweets': [{'position': {'lat': lat, 'lng': lng}, 'id': tweet.id}]}))
+            json_tweet = Json.generate_json([tweet])
+            self.broadcast(json.dumps({'tweets': json_tweet}))
             print("Broadcasting %s to %d clients" % (tweet, len(self.clients)))
         # Check for new tweets every second
         reactor.callLater(1, self.check_for_tweets)
