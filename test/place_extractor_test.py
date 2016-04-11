@@ -141,3 +141,9 @@ class TestPlaceExtractor(TestCase):
         self.tweet.content = 'Storbrann på "i Sandgt. 28.'
         places = PlaceExtractor(self.tweet).find_potential_places()
         self.assertEqual(places,  ['Sandgata', 'Storbrann'])
+
+    def test_places_with_scandinavian_characters_are_also_extracted(self):
+        self.tweet.content = 'Tromsø sentrum, beruset dame i 40-årene bragt inn og satt i drukkenarrest. Hun blir anmeldt for naskeri av varer. '
+        places = PlaceExtractor(self.tweet).find_potential_places()
+        self.assertEqual(places,  ['Tromsø'])
+       
