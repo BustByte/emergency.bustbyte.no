@@ -64,7 +64,7 @@ class Repository:
             JOIN places ON tweet_in_place.place_id = places.id
             WHERE content GLOB :query AND timestamp < :end AND timestamp > :start LIMIT 500''',
             {
-                'query': '*[ ,./:;#@(][{0}{1}]{2}[ ,.\!?:;/\')]*'.format(query[0].lower(), query[0].upper(), query[1:]),
+                'query': '*[^a-zA-Z][{0}{1}]{2}[^a-zA-Z]*'.format(query[0].lower(), query[0].upper(), query[1:]),
                 'end'  : query_object.get('endDate'),
                 'start': query_object.get('startDate')
             }
@@ -95,7 +95,7 @@ class Repository:
         )
         Database.connection.commit()
         rows = cur.fetchall()
-        
+
         for row in rows:
             place = Mapper.to_place(row)
 

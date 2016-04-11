@@ -197,3 +197,30 @@ class TestRepository(TestCase):
         self.query['endDate'] = '2014-05-05'
         results = Repository.search(self.query)
         self.assertEqual(len(results), 1)
+
+    def test_it_matches_place_wrapped_by_hyphens(self):
+        self.tweet.content = "Snakkes i -Vestby- gater hadebra."
+        Repository.create(self.tweet)
+        self.query['query'] = 'Vestby'
+        self.query['startDate'] = '2013-12-31'
+        self.query['endDate'] = '2014-05-05'
+        results = Repository.search(self.query)
+        self.assertEqual(len(results), 1)
+
+    def test_it_matches_place_at_start_of_tweet(self):
+        self.tweet.content = "Vestby på toget hadebra."
+        Repository.create(self.tweet)
+        self.query['query'] = 'Vestby'
+        self.query['startDate'] = '2013-12-31'
+        self.query['endDate'] = '2014-05-05'
+        results = Repository.search(self.query)
+        self.assertEqual(len(results), 1)
+
+    def test_it_matches_place_at_end_of_tweet(self):
+        self.tweet.content = "Toget hadebra Vestby"
+        Repository.create(self.tweet)
+        self.query['query'] = 'Vestby'
+        self.query['startDate'] = '2013-12-31'
+        self.query['endDate'] = '2014-05-05'
+        results = Repository.search(self.query)
+        self.assertEqual(len(results), 1)
