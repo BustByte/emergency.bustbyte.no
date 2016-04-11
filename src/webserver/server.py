@@ -77,9 +77,8 @@ class BroadcastServerFactory(WebSocketServerFactory):
         tweets = Repository.search(query)
         json_tweets = Json.generate_json(tweets)
 
-        lat = random.uniform(58.1, 70.1)
-        lng = random.uniform(4.6, 30.1)
-        tweet_id = "508967802481704960"
+        print ('Returning %s tweets on query: "%s"' % (len(tweets), query.get('query')))
+
         client.sendMessage(json.dumps({'tweets': json_tweets}).encode('utf8'))
 
 

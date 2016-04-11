@@ -30,8 +30,28 @@ function removeMarker(marker){
 
 
 function addMarker(position){
+	var latlng = new google.maps.LatLng(position);
+	 
+	//final position for marker, could be updated if another marker already exists in same position
+	var finalLatLng = latlng;
+
+	//check to see if any of the existing markers match the latlng of the new marker
+	if (markers.length !== 0) {
+		for (i=0; i < markers.length; i++) {
+			var existingMarker = markers[i];
+			var pos = existingMarker.getPosition();
+
+			//if a marker already exists in the same position as this marker
+			if (latlng.equals(pos)) {
+				//update the position of the coincident marker by applying a small multipler to its coordinates
+				var newLat = latlng.lat() + (Math.random() -0.5) / 3000;// * (Math.random() * (max - min) + min);
+				var newLng = latlng.lng() + (Math.random() -0.5) / 3000;// * (Math.random() * (max - min) + min);
+				finalLatLng = new google.maps.LatLng(newLat,newLng);
+			}
+		}
+	}
 	var marker = new google.maps.Marker({
-		position: position,
+		position: finalLatLng,
 		map: googleMap,
 		title: "Hendelse"
 	});

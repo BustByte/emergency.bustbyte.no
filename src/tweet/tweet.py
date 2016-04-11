@@ -5,7 +5,6 @@ class Tweet:
         self.user = None
         self.content = None
         self.position = None
-        self.position = None
         self.timestamp = None
 
     def __repr__(self):

@@ -22,7 +22,7 @@ class Mapper:
 
         row['timestamp'] = tweet.timestamp
 
-        return row 
+        return row
 
     @classmethod
     def to_tweet(cls, row):
@@ -60,8 +60,11 @@ class Mapper:
         if 'id' in row.keys():
             place.id = row['id']
 
-        if 'name' in row.keys():
-            place.name = row['name']
+        if 'place_name' in row.keys():
+            place.name = row['place_name']
+
+        if 'commune_name' in row.keys():
+            place.commune_name = row['commune_name']
 
         return place
 
