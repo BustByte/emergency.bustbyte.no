@@ -44,8 +44,8 @@ function addMarker(position){
 			//if a marker already exists in the same position as this marker
 			if (latlng.equals(pos)) {
 				//update the position of the coincident marker by applying a small multipler to its coordinates
-				var newLat = latlng.lat() + (Math.random() -0.5) / 1500;// * (Math.random() * (max - min) + min);
-				var newLng = latlng.lng() + (Math.random() -0.5) / 1500;// * (Math.random() * (max - min) + min);
+				var newLat = latlng.lat() + (Math.random() -0.5) / 3000;// * (Math.random() * (max - min) + min);
+				var newLng = latlng.lng() + (Math.random() -0.5) / 3000;// * (Math.random() * (max - min) + min);
 				finalLatLng = new google.maps.LatLng(newLat,newLng);
 			}
 		}
