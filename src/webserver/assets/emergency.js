@@ -1,6 +1,7 @@
 // Global map
 var googleMap;
 var markers = [];
+var openInfoWindow = null;
 
 // Socket
 var socket = null;
@@ -19,6 +20,7 @@ function enterSearchState(){
 	}
 	markers = [];
 	$('.tweet-list').hide();
+	disableSearchForm();
 }
 
 
@@ -31,7 +33,7 @@ function removeMarker(marker){
 
 function addMarker(position){
 	var latlng = new google.maps.LatLng(position);
-	 
+
 	//final position for marker, could be updated if another marker already exists in same position
 	var finalLatLng = latlng;
 
@@ -44,8 +46,8 @@ function addMarker(position){
 			//if a marker already exists in the same position as this marker
 			if (latlng.equals(pos)) {
 				//update the position of the coincident marker by applying a small multipler to its coordinates
-				var newLat = latlng.lat() + (Math.random() -0.5) / 3000;// * (Math.random() * (max - min) + min);
-				var newLng = latlng.lng() + (Math.random() -0.5) / 3000;// * (Math.random() * (max - min) + min);
+				var newLat = latlng.lat() + (Math.random() -0.5) / 60;// * (Math.random() * (max - min) + min);
+				var newLng = latlng.lng() + (Math.random() -0.5) / 30;// * (Math.random() * (max - min) + min);
 				finalLatLng = new google.maps.LatLng(newLat,newLng);
 			}
 		}
@@ -53,7 +55,7 @@ function addMarker(position){
 	var marker = new google.maps.Marker({
 		position: finalLatLng,
 		map: googleMap,
-		title: "Hendelse"
+		title: "Tweet"
 	});
 	if (! searchState) marker.setAnimation(google.maps.Animation.BOUNCE);
 
@@ -76,17 +78,26 @@ function createTweetOnMap(id, position){
 
 	// Add a listener to the marker, opening the info window when clicked.
 	marker.addListener('click', function() {
+		if(openInfoWindow !== null){
+			google.maps.event.trigger(openInfoWindow, 'closeclick');
+			openInfoWindow.close();
+		}
 		marker.setAnimation(null);
 		infoWindow.open(googleMap, marker);
+		openInfoWindow = infoWindow;
 		createPositionalTweet(id);
 	});
 
 	infoWindow.addListener('closeclick', function(){
-		this.setContent("<i class='fa fa-circle-o-notch fa-spin'></i><div style='display: none' class='info-window' id='" + id + "'></div>");
+		clearInfoWindow(infoWindow, id);
 	});
 
 	// If we are not in a search state give the marker a lifetime.
 	if (! searchState) setTimeout(function() { removeMarker(marker); }, markerLifeTimeInHours * 3600000);
+}
+
+function clearInfoWindow(infoWindow, id){
+	infoWindow.setContent("<i class='fa fa-circle-o-notch fa-spin'></i><div style='display: none' class='info-window' id='" + id + "'></div>");
 }
 
 
@@ -188,8 +199,14 @@ $(document).ready(function (){
 				newTweets++;
 			updateTitle();
 
-			//Play sound when a new tweet arrives
-			document.getElementById('notification-sound').play();
+			if (searchState){
+				$('.search-result').show();
+				$('.search-result .hits').html(tweets['tweets'].length);
+				enableSearchForm();
+			}
+
+			//Play sound when new tweets arrives
+			if (tweets['tweets'].length) document.getElementById('notification-sound').play();
 		};
 	}
 });
@@ -264,6 +281,18 @@ $(document).ready(function(event) {
 	// Default date today
 	$('input[name="start"], input[name="end"]').val(new Date().toDateInputValue());
 });
+
+
+function enableSearchForm(){
+	$('.search-loader').hide();
+	$('.search-button').show();
+}
+
+
+function disableSearchForm(){
+	$('.search-button').hide();
+	$('.search-loader').show();
+}
 
 
 Date.prototype.toDateInputValue = (function() {

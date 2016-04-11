@@ -23,15 +23,22 @@
               <input type="date" name="start">
               <input type="date" name="end">
               <input name="query" type="text" placeholder="Søk i tweets">
-              <input type="submit" value="Søk">
+              <input class="search-button" type="submit" value="Søk">
+              <div class="search-loader">
+                <i class='fa fa-circle-o-notch fa-spin'></i>
+              </div>
             </div>
           </form>
+          <div class="search-result">
+            <span>Antall treff: <b class="hits"></b></span>
+          </div>
           <div class="tweet-list">
             <span>Liste over tweets med ukjent positsjon</span>
             <div id="list"></div>
           </div>
         </div>
       </div>
+      <i class='hidden fa fa-circle-o-notch fa-spin'></i>
     </div>
     <audio id="notification-sound" src="assets/notification.mp3" preload="auto"></audio>
   </body>
