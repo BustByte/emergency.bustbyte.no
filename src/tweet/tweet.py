@@ -8,6 +8,6 @@ class Tweet:
         self.timestamp = None
 
     def __repr__(self):
-        return '<Tweet:id=%s, timestamp=%s, position=%s, user=%s, content="%s" position=%s>' % (
-            self.id, self.timestamp, self.position, self.user, self.content, self.position
+        return '<Tweet:id=%s, timestamp=%s, position=%s, user=%s, content="%s">' % (
+            self.id, self.timestamp, self.position, self.user, self.content
         )

@@ -5,49 +5,49 @@ from tweet import Tweet
 class Processor:
 
     def __init__(self):
-        self.tweets = Repository.all()
         self.communes, self.places = \
             Repository.all_users_with_places()
 
-    def process_one(self, tweet):
-        return self.process([tweet])
+    def process(self, tweet):
+        stored_tweet = Repository.create(tweet)
 
-    def process(self, tweets):
+        username = tweet.user.username
+        sorted_scores = self.get_potential_places(tweet)
+        actual_places = self.places[username]
+        actual_communes = self.communes[username]
+
+        # Iterate over all the potential places by score to find commune
+        for potential_place, score in sorted_scores:
+            potential_commune = potential_place
+
+            # If the place is a commune, restrict all places to be inside that commune
+            if potential_commune in actual_communes:
+                actual_places = actual_communes[potential_place]
+
+                # We found a commune, do not look for any more
+                break
+
+        # Iterate over all the potential places by score
+        for potential_place, score in sorted_scores:
+
+            # Check if the potential place is in the actual places
+            if potential_place in actual_places:
+                actual_place = actual_places[potential_place]
+
+                # Create a relation between the tweet and the place
+                position = self.link_tweet_to_place(tweet, actual_place)
+
+                # We found a place, so lets move on to the next weet
+                break
+
+        return Repository.read(tweet.id)
+
+    def process_many(self, tweets):
         for index, tweet in enumerate(tweets):
-
-            username = tweet.user.username
-            sorted_scores = self.get_potential_places(tweet)
-            actual_places = self.places[username]
-            actual_communes = self.communes[username]
-
-            # Iterate over all the potential places by score to find commune
-            for potential_place, score in sorted_scores:
-                potential_commune = potential_place
-
-                # If the place is a commune, restrict all places to be inside that commune
-                if potential_commune in actual_communes:
-                    actual_places = actual_communes[potential_place]
-
-                    # We found a commune, do not look for any more
-                    break
-
-            # Iterate over all the potential places by score
-            for potential_place, score in sorted_scores:
-
-                # Check if the potential place is in the actual places
-                if potential_place in actual_places:
-                    actual_place = actual_places[potential_place]
-
-                    # Create a relation between the tweet and the place
-                    self.link_tweet_to_place(tweet, place)
-
-                    # We found a place, so lets move on to the next weet
-                    break
-
-        return True
+            self.process(tweet)
 
     def link_tweet_to_place(self, tweet, place):
-        return Repository.map_place_to_tweet(tweet.id, actual_place.id) 
+        return Repository.map_place_to_tweet(tweet.id, place.id) 
 
     def get_potential_places(self, tweet):
         scores = {}

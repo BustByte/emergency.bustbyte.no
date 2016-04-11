@@ -4,4 +4,4 @@ class User:
         self.username = username
 
     def __repr__(self):
-        return self.name
+        return self.username

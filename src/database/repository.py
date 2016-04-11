@@ -26,10 +26,13 @@ class Repository:
     @classmethod
     def read(cls, tweet_id):
         cur = Database.connection.cursor()
-        cur.execute('''SELECT * FROM tweets 
+        cur.execute('''
+        SELECT * FROM tweets 
             JOIN users ON users.username = tweets.username 
-            WHERE id = :id AND users.username not NULL
-        ''', {'id': tweet_id})
+            LEFT OUTER JOIN tweet_in_place ON tweet_in_place.tweet_id=tweets.id
+            LEFT OUTER JOIN places on tweet_in_place.place_id=places.id
+            WHERE tweets.id = :id AND users.username not NULL
+        ''', {'id': str(tweet_id)})
         Database.connection.commit()
         row = cur.fetchone()
         tweet = Mapper.to_tweet(row)
@@ -38,7 +41,7 @@ class Repository:
     @classmethod
     def map_place_to_tweet(cls, tweet_id, place_id):
         cur = Database.connection.cursor()
-        row = {'tweet_id': tweet_id, 'place_id': place_id}
+        row = {'tweet_id': str(tweet_id), 'place_id': place_id}
         try:
             row = defaultdict(lambda: None, row)
 
@@ -52,7 +55,6 @@ class Repository:
         except sqlite3.IntegrityError:
             return None
         Database.connection.commit()
-        print(cur.lastrowid)
         return cur.lastrowid
 
     @classmethod
