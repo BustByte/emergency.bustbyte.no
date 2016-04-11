@@ -28,3 +28,15 @@ SELECT DISTINCT places.id, places.commune_id, places.name, communes.name FROM us
     JOIN places on communes.id = places.commune_id
     WHERE users.username = 'opsenfollo';
 ````
+
+### Check location information for a tweet.
+````sql
+SELECT * from tweets
+   JOIN tweet_in_place on tweets.id = tweet_in_place.tweet_id
+   JOIN places on tweet_in_place.place_id = places.id
+````
+
+### Delete all mappings between tweets and places
+````sql
+DELETE FROM tweet_in_place
+````

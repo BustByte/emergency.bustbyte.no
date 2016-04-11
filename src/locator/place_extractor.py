@@ -7,7 +7,8 @@ class PlaceExtractor:
 
     @staticmethod
     def starts_with_capital_letter(word):
-        return word[0] == word[0].upper() if word else False
+        return word[0] == word[0].upper() \
+            if word and word[0].isalpha() else False
 
     @staticmethod
     def is_a_stopword(word):

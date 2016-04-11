@@ -36,6 +36,27 @@ class Repository:
         return tweet
 
     @classmethod
+    def map_place_to_tweet(cls, tweet_id, place_id):
+        cur = Database.connection.cursor()
+        row = {'tweet_id': tweet_id, 'place_id': place_id}
+        try:
+            row = defaultdict(lambda: None, row)
+
+            cur.execute('''
+                INSERT INTO tweet_in_place
+                (tweet_id, place_id) values
+                (:tweet_id, :place_id)''',
+                row 
+            )
+
+        except sqlite3.IntegrityError:
+            return None
+        Database.connection.commit()
+        print(cur.lastrowid)
+        return cur.lastrowid
+
+
+    @classmethod
     def search(cls, query_object):
         cur = Database.connection.cursor()
         cur.execute('''SELECT * FROM tweets
@@ -56,7 +77,7 @@ class Repository:
     @classmethod
     def all(cls):
         cur = Database.connection.cursor()
-        cur.execute('''SELECT * FROM tweets LIMIT 200''')
+        cur.execute('''SELECT * FROM tweets''')
         Database.connection.commit()
         rows = cur.fetchall()
         tweets = [Mapper.to_tweet(row) for row in rows]
@@ -70,10 +91,9 @@ class Repository:
             JOIN commune_in_district on districts.id = commune_in_district.district_id
             JOIN communes on commune_in_district.commune_id = communes.id
             JOIN places on communes.id = places.commune_id
-            WHERE users.username = ':username';''', {
-                'username': username
-            }
+            WHERE users.username = :username''', {"username": username}
         )
+
         Database.connection.commit()
         rows = cur.fetchall()
         places = [Mapper.to_place(row) for row in rows]
