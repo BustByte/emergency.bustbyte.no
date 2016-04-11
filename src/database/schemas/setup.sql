@@ -45,7 +45,7 @@ CREATE TABLE `tweet_in_place` (
 -- Only run if under test
 INSERT INTO users (username, district) VALUES ('opsenoslo', 1);
 INSERT INTO districts (id, name) VALUES (1, 'Øst');
-INSERT INTO communes (id, name) VALUES (1, 'Oslo Kommune');
+INSERT INTO communes (id, name) VALUES (1, 'Oslo');
 INSERT INTO commune_in_district (commune_id, district_id) VALUES (1, 1);
 INSERT INTO places (id, commune_id, name, latitude, longitude) VALUES (1, 1, "Vestby", "59.3434", "18.3434");
 

@@ -4,9 +4,9 @@ from locator import PlaceExtractor, ScoreCalculator
 from tweet import Tweet
 
 tweets = Repository.all()
-places = Repository.all_users_with_places()
+communes, places = Repository.all_users_with_places()
 
-def get_potential_places(tweet)
+def get_potential_places(tweet):
     scores = {}
     potential_places = PlaceExtractor(tweet).find_potential_places()
 
@@ -17,18 +17,32 @@ def get_potential_places(tweet)
 
     return sorted_scores
 
-for tweet in tweets:
+for index, tweet in enumerate(tweets):
 
     username = tweet.user.username
     sorted_scores = get_potential_places(tweet)
+    actual_places = places[username]
+    actual_communes = communes[username]
+    actual_place = None
 
+    # Iterate over all the potential places by score
     for potential_place, score in sorted_scores:
 
-        if potential_place in places[username]:
-            place = places[username][potential_place]
-            Repository.map_place_to_tweet(tweet.id, place.id) 
+        # Check if there exists a commune with the same name as the place
+        potential_commune = potential_place
+        if potential_commune in actual_communes:
 
-            break # Move on to next tweet
+            # Limit all places to that commune
+            actual_places = actual_communes[potential_place]
+        
+        # Check if the potential place is in the actual places
+        if potential_place in actual_places:
+            actual_place = actual_places[potential_place]
+            Repository.map_place_to_tweet(tweet.id, actual_place.id) 
 
-    print(scores)
+            # We found a place, so lets move on to the next weet
+            break
+
+    print("TWEET NUMBER:", index)
+    print(sorted_scores)
     print("\n\n")

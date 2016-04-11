@@ -48,6 +48,12 @@ class TestRepository(TestCase):
 
     def test_it_can_return_all_the_places_by_username(self):
         Repository.create(self.tweet)
-        places = Repository.all_users_with_places()
+        communes, places = Repository.all_users_with_places()
         self.assertIn('opsenoslo', places)
-        self.assertEqual(places['opsenoslo']['Vestby'].commune_name, 'Oslo Kommune')
+        self.assertEqual(places['opsenoslo']['Vestby'].commune_name, 'Oslo')
+
+    def test_it_can_return_all_the_places_by_commune(self):
+        Repository.create(self.tweet)
+        communes, places = Repository.all_users_with_places()
+        #self.assertIn('Oslo', communes)
+        self.assertEqual(communes['opsenoslo']['Oslo']['Vestby'].commune_name, 'Oslo')

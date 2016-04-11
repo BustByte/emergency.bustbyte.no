@@ -76,7 +76,7 @@ class Repository:
     @classmethod
     def all(cls):
         cur = Database.connection.cursor()
-        cur.execute('''SELECT * FROM tweets''')
+        cur.execute('''SELECT * FROM users JOIN tweets on users.username = tweets.username''')
         Database.connection.commit()
         rows = cur.fetchall()
         tweets = [Mapper.to_tweet(row) for row in rows]
@@ -84,7 +84,7 @@ class Repository:
 
     @classmethod
     def all_users_with_places(cls):
-        cache = {}
+        commune_cache, place_cache = ({}, {})
         cur = Database.connection.cursor()
         cur.execute('''SELECT username, communes.name as commune_name, places.id AS id, places.name AS place_name FROM users
             JOIN districts on users.district = districts.id
@@ -96,10 +96,18 @@ class Repository:
         rows = cur.fetchall()
         
         for row in rows:
-            if row['username'] not in cache:
-                cache[row['username']] = {}
-
             place = Mapper.to_place(row)
-            cache[row['username']][place.name] = place
 
-        return cache
+            if row['commune_name'] not in commune_cache:
+                commune_cache[row['username']] = {}
+
+                if place.commune_name not in commune_cache[row['username']]:
+                    commune_cache[row['username']][place.commune_name] = {}
+
+            if row['username'] not in place_cache:
+                place_cache[row['username']] = {}
+
+            place_cache[row['username']][place.name] = place
+            commune_cache[row['username']][place.commune_name][place.name] = place
+
+        return (commune_cache, place_cache)
