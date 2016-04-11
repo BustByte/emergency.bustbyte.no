@@ -55,7 +55,6 @@ class Repository:
         except sqlite3.IntegrityError:
             return None
         Database.connection.commit()
-        print(cur.lastrowid)
         return cur.lastrowid
 
     @classmethod
