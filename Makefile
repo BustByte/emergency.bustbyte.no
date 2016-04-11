@@ -1,7 +1,8 @@
 PIP=$(shell which pip3)
 PYTHON=$(shell which python3)
 CONFIG_DIR=src/config
-CONFIG_FILE=$(CONFIG_DIR)/config.py
+CONFIG_NAME=config.py
+CONFIG_FILE=$(CONFIG_DIR)/$(CONFIG_NAME)
 SRC_DIR=src
 TEST_DIR=test
 TEST_FILES=*_test.py
@@ -13,7 +14,7 @@ DATABASE_FILE=$(DATABASE_DIR)/$(DATABASE_NAME)
 TRANSFER_SH=https://transfer.sh
 
 install:
-	@[ -f $(CONFIG_FILE) ] || echo 'configuration = {}' > $(CONFIG_FILE)
+	@[ -f $(CONFIG_FILE) ] || cp $(TEST_DIR)/$(CONFIG_NAME) $(CONFIG_FILE)
 	@$(PIP) install -r requirements.txt
 
 unit-test: export PYTHONPATH=$(MODULES)
