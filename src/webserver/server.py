@@ -77,7 +77,14 @@ class BroadcastServerFactory(WebSocketServerFactory):
         tweets = Repository.search(query)
         json_tweets = Json.generate_json(tweets)
 
-        print ('Returning %s tweets on query: "%s"' % (len(tweets), query.get('query')))
+        print ('Returning %s tweets on query "%s" between %s and %s.' %
+            (
+                len(tweets),
+                query.get('query'),
+                query.get('startDate'),
+                query.get('endDate')
+            )
+        )
 
         client.sendMessage(json.dumps({'tweets': json_tweets}).encode('utf8'))
 

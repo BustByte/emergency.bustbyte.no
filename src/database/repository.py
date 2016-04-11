@@ -58,12 +58,13 @@ class Repository:
     @classmethod
     def search(cls, query_object):
         cur = Database.connection.cursor()
+        query = query_object.get('query')
         cur.execute('''SELECT * FROM tweets
             JOIN tweet_in_place ON tweet_in_place.tweet_id = tweets.id
             JOIN places ON tweet_in_place.place_id = places.id
             WHERE content GLOB :query AND timestamp < :end AND timestamp > :start LIMIT 500''',
             {
-                'query': '*[ ,./:;#@(]{0}[ ,.\!?:;/\')]*'.format(query_object.get('query')),
+                'query': '*[ ,./:;#@(][{0}{1}]{2}[ ,.\!?:;/\')]*'.format(query[0].lower(), query[0].upper(), query[1:]),
                 'end'  : query_object.get('endDate'),
                 'start': query_object.get('startDate')
             }
