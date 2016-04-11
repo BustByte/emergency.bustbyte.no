@@ -1,9 +1,10 @@
 import operator
 from database import Repository
-from locator import PlaceExtractor
-from locator import ScoreCalculator
+from tweet import Tweet
+from locator import PlaceExtractor, ScoreCalculator
 
 tweets = Repository.all()
+districts = {}
 
 for tweet in tweets:
 
@@ -16,25 +17,34 @@ for tweet in tweets:
 
     sorted_scores = sorted(scores.items(), reverse=True, key=lambda score: score[1])
 
-    districts = {}
-
     for sorted_score in sorted_scores:
 
         tweet_place = sorted_score[0]
-        username = Tweet.user.username
+        username = tweet.user.username
         
         if username in districts:
+            print("hit the cache", username)
             places = districts[username]
         else:
-            districts[username] = Repository.read_places(username)
+            print("missed the cache", username)
+            eirik_places = Repository.read_places(username)
+            quick_places = {}
+
+            for eirik_place in eirik_places:
+                quick_places[eirik_place.name] = eirik_place
+            
+            districts[username] = quick_places
+
             places = districts[username]
 
-        for place in places:
+        if place in places:
+            place = places[place]
             if place.name == tweet_place:
                 Repository.map_place_to_tweet(tweet.id, place.id) 
 
-    print(scores)
+                # Move on to next tweet
+                break
 
-    #print(scores)
+    print(scores)
 
     print("\n\n")
