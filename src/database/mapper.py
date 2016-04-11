@@ -1,6 +1,6 @@
 from user import User
 from tweet import Tweet
-from place import Place
+from position import Place
 from position import Position
 from datetime import datetime
 
