@@ -32,7 +32,7 @@ class Repository:
             LEFT OUTER JOIN tweet_in_place ON tweet_in_place.tweet_id=tweets.id
             LEFT OUTER JOIN places on tweet_in_place.place_id=places.id
             WHERE tweets.id = :id AND users.username not NULL
-        ''', {'id': tweet_id})
+        ''', {'id': str(tweet_id)})
         Database.connection.commit()
         row = cur.fetchone()
         tweet = Mapper.to_tweet(row)
@@ -41,7 +41,7 @@ class Repository:
     @classmethod
     def map_place_to_tweet(cls, tweet_id, place_id):
         cur = Database.connection.cursor()
-        row = {'tweet_id': tweet_id, 'place_id': place_id}
+        row = {'tweet_id': str(tweet_id), 'place_id': place_id}
         try:
             row = defaultdict(lambda: None, row)
 

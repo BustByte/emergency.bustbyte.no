@@ -10,7 +10,7 @@ class Mapper:
     def to_row(cls, tweet):
         row = {}
 
-        row['id'] = tweet.id
+        row['id'] = str(tweet.id)
 
         row['username'] = tweet.user.username \
             if tweet.user else None
