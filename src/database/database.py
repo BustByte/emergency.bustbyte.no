@@ -11,6 +11,8 @@ def get_connection():
         detect_types=sqlite3.PARSE_DECLTYPES|sqlite3.PARSE_COLNAMES
     )
     connection.row_factory = sqlite3.Row
+    connection.cursor().execute('PRAGMA read_uncommitted = true;')
+    connection.commit()
     return connection
 
 class Database:
