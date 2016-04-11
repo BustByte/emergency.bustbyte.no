@@ -72,6 +72,15 @@ class TestRepository(TestCase):
         results = Repository.search(self.query)
         self.assertEqual(len(results), 1)
 
+    def test_it_does_not_matche_tweet_if_it_is_published_outside_the_interval(self):
+        self.tweet.content = 'Snakkes i Ås hadebra.'
+        Repository.create(self.tweet)
+        self.query['query'] = 'Vestby'
+        self.query['startDate'] = '2010-01-31'
+        self.query['endDate'] = '2010-05-05'
+        results = Repository.search(self.query)
+        self.assertEqual(len(results), 0)
+
     def test_it_matches_place_wrapped_in_parenthesis(self):
         self.tweet.content = 'Snakkes i (Oslo) hadebra.'
         Repository.create(self.tweet)
