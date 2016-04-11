@@ -45,7 +45,3 @@ for index, tweet in enumerate(tweets):
 
             # We found a place, so lets move on to the next weet
             break
-
-    #print("TWEET NUMBER:", index)
-    #print(sorted_scores)
-    #print("\n\n")
