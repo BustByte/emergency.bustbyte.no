@@ -55,7 +55,6 @@ class Repository:
         print(cur.lastrowid)
         return cur.lastrowid
 
-
     @classmethod
     def search(cls, query_object):
         cur = Database.connection.cursor()
@@ -104,19 +103,3 @@ class Repository:
             cache[row['username']][place.name] = place
 
         return cache
-
-    @classmethod
-    def read_places(cls, username):
-        cur = Database.connection.cursor()
-        cur.execute('''SELECT places.id AS id, places.name AS place_name, communes.name AS commune_name FROM users
-            JOIN districts on users.district = districts.id
-            JOIN commune_in_district on districts.id = commune_in_district.district_id
-            JOIN communes on commune_in_district.commune_id = communes.id
-            JOIN places on communes.id = places.commune_id
-            WHERE users.username = :username''', {"username": username}
-        )
-
-        Database.connection.commit()
-        rows = cur.fetchall()
-        places = [Mapper.to_place(row) for row in rows]
-        return places
