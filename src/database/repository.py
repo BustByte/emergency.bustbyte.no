@@ -26,9 +26,12 @@ class Repository:
     @classmethod
     def read(cls, tweet_id):
         cur = Database.connection.cursor()
-        cur.execute('''SELECT * FROM tweets 
+        cur.execute('''
+        SELECT * FROM tweets 
             JOIN users ON users.username = tweets.username 
-            WHERE id = :id AND users.username not NULL
+            JOIN tweet_in_place ON tweet_in_place.tweet_id=tweets.id
+            JOIN places on tweet_in_place.place_id=places.id
+            WHERE tweets.id = :id AND users.username not NULL
         ''', {'id': tweet_id})
         Database.connection.commit()
         row = cur.fetchone()

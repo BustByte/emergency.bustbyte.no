@@ -9,6 +9,8 @@ class Processor:
             Repository.all_users_with_places()
 
     def process(self, tweet):
+        stored_tweet = Repository.create(tweet)
+
         username = tweet.user.username
         sorted_scores = self.get_potential_places(tweet)
         actual_places = self.places[username]
@@ -35,20 +37,17 @@ class Processor:
                 # Create a relation between the tweet and the place
                 position = self.link_tweet_to_place(tweet, actual_place)
 
-                # Attach the new position to tweet
-                tweet.position = Repository.read(tweet.id).position
-
                 # We found a place, so lets move on to the next weet
                 break
 
-        return tweet
+        return Repository.read(tweet.id)
 
     def process_many(self, tweets):
         for index, tweet in enumerate(tweets):
             self.process(tweet)
 
     def link_tweet_to_place(self, tweet, place):
-        return Repository.map_place_to_tweet(tweet.id, actual_place.id) 
+        return Repository.map_place_to_tweet(tweet.id, place.id) 
 
     def get_potential_places(self, tweet):
         scores = {}

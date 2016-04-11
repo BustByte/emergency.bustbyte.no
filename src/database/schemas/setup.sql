@@ -49,5 +49,3 @@ INSERT INTO communes (id, name) VALUES (1, 'Oslo');
 INSERT INTO commune_in_district (commune_id, district_id) VALUES (1, 1);
 INSERT INTO places (id, commune_id, name, latitude, longitude) VALUES (1, 1, "Vestby", "59.3434", "18.3434");
 INSERT INTO tweet_in_place (tweet_id, place_id) VALUES ('1234', 1);
-
-
