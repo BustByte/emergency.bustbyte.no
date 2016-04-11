@@ -29,8 +29,8 @@ class Repository:
         cur.execute('''
         SELECT * FROM tweets 
             JOIN users ON users.username = tweets.username 
-            JOIN tweet_in_place ON tweet_in_place.tweet_id=tweets.id
-            JOIN places on tweet_in_place.place_id=places.id
+            LEFT OUTER JOIN tweet_in_place ON tweet_in_place.tweet_id=tweets.id
+            LEFT OUTER JOIN places on tweet_in_place.place_id=places.id
             WHERE tweets.id = :id AND users.username not NULL
         ''', {'id': tweet_id})
         Database.connection.commit()

@@ -38,3 +38,10 @@ class TestProcessor(TestCase):
         stored_tweet = processor.process(self.tweet)  
         assert stored_tweet.position.latitude != None
         assert stored_tweet.position.longitude != None
+
+    def test_processor_stores_tweet_even_if_no_place_matched(self):
+        self.tweet.content = 'Westby, Åslo: En hund har blitt påkjørt.'
+        processor = Processor()
+        stored_tweet = processor.process(self.tweet)  
+        assert stored_tweet.position.latitude == None
+        assert stored_tweet.position.longitude == None
