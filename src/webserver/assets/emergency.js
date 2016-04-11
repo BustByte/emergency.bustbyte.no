@@ -12,6 +12,10 @@ var windowHasFocus = true;
 var searchState = false;
 var markerLifeTimeInHours = 1;
 
+// Selected categories
+var selectedEvidence = false;
+var selectedEvent = false;
+
 
 function enterSearchState(){
 	searchState = true;
@@ -213,24 +217,24 @@ $(document).ready(function (){
 
 
 function searchIsValid(){
-	var startDate = $('input[name="start"]').val();
-	var endDate = $('input[name="end"]').val();
-	var searchString = $('input[name="query"]').val();
+	var startDate = $('#search input[name="start"]').val();
+	var endDate = $('#search input[name="end"]').val();
+	var searchString = $('i#search nput[name="query"]').val();
 
 	if (startDate === ""){
-		$('input[name="start"]').focus();
+		$('#search input[name="start"]').focus();
 		return false;
 	}
 	else if (endDate === ""){
-		$('input[name="end"]').focus();
+		$('#search input[name="end"]').focus();
 		return false;
 	}
 	else if (searchString === ""){
-		$('input[name="query"]').focus();
+		$('#search input[name="query"]').focus();
 		return false;
 	}
 	else if (new Date(startDate) > new Date(endDate)){
-		$('input[name="start"]').focus();
+		$('#search input[name="start"]').focus();
 		return false;
 	}
 	return true;
@@ -249,12 +253,30 @@ function search(query) {
 }
 
 
-function generateQueryObject(){
+function generateSearchQueryObject(){
 	return JSON.stringify({
-		query: $('input[name="query"]').val(),
-		startDate: $('input[name="start"]').val(),
-		endDate: $('input[name="end"]').val()
+		query: $('#search input[name="query"]').val(),
+		startDate: $('#search input[name="start"]').val(),
+		endDate: $('#search input[name="end"]').val(),
+		type: 'search'
 	});
+}
+
+
+function generateCategoryQueryObject(){
+	if(selectedEvent || selectedEvidence){
+		return JSON.stringify({
+			event: selectedEvent,
+			evidence: selectedEvidence,
+			startDate: $('#category input[name="start"]').val(),
+			endDate: $('#category input[name="end"]').val(),
+			type: 'category'
+		});
+	}
+	else {
+		alert("Vennligst velg minimun en artifakt eller en hendelse.");
+		return false;
+	}
 }
 
 
@@ -273,13 +295,39 @@ $(document).ready(function(event) {
 	$("form#search").submit(function( event ) {
 		event.preventDefault();
 		if (searchIsValid()){
-			queryObject = generateQueryObject();
+			queryObject = generateSearchQueryObject();
 			search(queryObject);
 		}
 	});
 
+	// Listener on category search
+	$("form#category").submit(function( event ) {
+		event.preventDefault();
+		queryObject = generateCategoryQueryObject();
+		if (queryObject)
+			search(queryObject);
+	});
+
 	// Default date today
 	$('input[name="start"], input[name="end"]').val(new Date().toDateInputValue());
+
+	// Click listeners on category buttons
+	$('.category-buttons .evidence i').click(function(){
+		$('.category-buttons .evidence i').removeClass('selected');
+		$(this).addClass('selected');
+		selectedEvidence = $(this).attr('id');
+	});
+
+	$('.category-buttons .events i').click(function(){
+		$('.category-buttons .events i').removeClass('selected');
+		$(this).addClass('selected');
+		selectedEvent = $(this).attr('id');
+	});
+
+	// Change from search to categories and back
+	$('.toggle-button').click(function(){
+		$('.option-box').toggleClass('active-search');
+	});
 });
 
 

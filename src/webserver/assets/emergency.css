@@ -42,10 +42,10 @@ div.input-group {
 }
 
 div.tweet-list, div.search-result{
-	box-shadow: 0 2px 4px rgba(0,0,0,0.2),0 -1px 0px rgba(0,0,0,0.02);
 	background-color: #FFF;
 	margin-top: 15px;
 	display: none;
+	box-shadow: 0 2px 4px rgba(0,0,0,0.2),0 -1px 0px rgba(0,0,0,0.02);
 }
 
 div.tweet-list #list{
@@ -98,30 +98,24 @@ input{
 	font-size: 13px;
 }
 
+.input-group .category-buttons span{
+	background-color: transparent;
+	padding: 0 0 0 0.6em;
+	width: 57px;
+	display: inline-block;
+	border: none;
+}
+
 .input-group input[type="date"]:first-of-type{
 	border-right: 2px solid rgb(247, 247, 247);
 }
 
-div.input-group input[type="text"]{
+div.input-group input[type="text"], form#category .category-buttons{
     border: 0;
     width: 75%;
     background: rgb(247,247,247);
     line-height: 1.75em;
     font-size: 18px;
-}
-
-div.input-group input[type="submit"]{
-    width: 25%;
-    color: rgb(119, 119, 119);
-    cursor: pointer;
-    background: #ddd;
-    text-transform: uppercase;
-    border: 0;
-    outline: 0;
-    font-size: 1em;
-    font-weight: 600;
-    text-align: center;
-    line-height: 1.75em;
 }
 
 .info-window i:first-child:not(:last-child){
@@ -135,9 +129,12 @@ div.search-loader{
 	display: none;
 }
 
-div.search-loader .fa-circle-o-notch{
+#search div.search-loader .fa-circle-o-notch{
 	margin: 9px 0 0;
-	background-color: 
+}
+
+#category div.search-loader .fa-circle-o-notch{
+	margin: 18px 0 0;
 }
 
 .fa-circle-o-notch{
@@ -145,8 +142,63 @@ div.search-loader .fa-circle-o-notch{
 	margin: 20px 40px 20px 55px;
 }
 
-.hidden{
+.hidden-preloader{
 	position: absolute;
 	left: -100px;
+	margin: 0;
 }
 
+.category-buttons [class^="flaticon-"]:before, .category-buttons [class*=" flaticon-"]:before, .category-buttons [class^="flaticon-"]:after, .category-buttons [class*=" flaticon-"]:after{
+	margin: 6px;
+	border-radius: 3px;
+}
+
+i[class^="flaticon-"]:hover{
+	background-color: #ddd;
+	cursor: pointer;
+}
+
+.category-buttons i {
+	border: 2px solid transparent;
+}
+
+.category-buttons i.selected{
+	border: 2px solid #ccc;
+}
+
+.button, .toggle-button{
+	color: rgb(119, 119, 119);
+	cursor: pointer;
+	background: #ddd;
+    text-transform: uppercase;
+    border: 0;
+    outline: 0;
+    font-weight: 600;
+    text-align: center;
+}
+
+.button:hover, .toggle-button:hover{
+	background-color: #ccc;
+}
+
+.option-box .toggle-button{
+	width: 100%;
+	padding: 5px;
+    font-size: 0.75em;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2),0 -1px 0px rgba(0,0,0,0.02);
+}
+
+div.input-group input[type="submit"]{
+    width: 25%;
+    font-size: 1em;
+    font-weight: 600;
+    line-height: 1.75em;
+}
+
+.active-search .toggle-search-button, .active-search #category{
+	display: none;
+}
+
+.option-box:not(.active-search) .toggle-category-button, .option-box:not(.active-search) #search{
+	display: none;
+}
