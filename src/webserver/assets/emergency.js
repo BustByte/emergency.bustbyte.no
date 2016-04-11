@@ -253,7 +253,8 @@ function generateQueryObject(){
 	return JSON.stringify({
 		query: $('input[name="query"]').val(),
 		startDate: $('input[name="start"]').val(),
-		endDate: $('input[name="end"]').val()
+		endDate: $('input[name="end"]').val(),
+		type: 'search'
 	});
 }
 
