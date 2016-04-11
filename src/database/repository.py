@@ -61,9 +61,9 @@ class Repository:
         cur.execute('''SELECT * FROM tweets
             JOIN tweet_in_place ON tweet_in_place.tweet_id = tweets.id
             JOIN places ON tweet_in_place.place_id = places.id
-            WHERE content LIKE :query AND timestamp < :end AND timestamp > :start LIMIT 500''',
+            WHERE content GLOB :query AND timestamp < :end AND timestamp > :start LIMIT 500''',
             {
-                'query': '% {0} %'.format(query_object.get('query')),
+                'query': '*[ ,./:;#@(]{0}[ ,.\!?:;/\')]*'.format(query_object.get('query')),
                 'end'  : query_object.get('endDate'),
                 'start': query_object.get('startDate')
             }
