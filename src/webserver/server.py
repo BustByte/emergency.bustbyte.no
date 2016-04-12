@@ -11,6 +11,7 @@ from listeners.twitter_listener import *
 from database.repository import Repository
 from tweet.json_generator import Json
 from processor import Processor
+from ontology import Tunnel
 
 from multiprocessing import Process, Pipe
 
@@ -27,8 +28,13 @@ class BroadcastServerProtocol(WebSocketServerProtocol):
     def onMessage(self, payload, isBinary):
         if not isBinary:
             query = json.loads(payload.decode('utf8'))
+
             if query.type == 'category':
-                pass
+                query = Query.from_json(payload.decode('utf8'))
+                tweet_ids = Tunnel.pull(query)
+                tweets = Repository.read_multiple(tweet_ids)
+                self.factory.category(tweets, self)
+
             else if query.type == 'search':
                 self.factory.search(query, self)
 
@@ -93,6 +99,10 @@ class BroadcastServerFactory(WebSocketServerFactory):
 
         client.sendMessage(json.dumps({'tweets': json_tweets}).encode('utf8'))
 
+    def category(self, results, client):
+        json_tweets = Json.generate_json(results)
+        client.sendMessage(json.dumps({'tweets': json_tweets}).encode('utf8'))
+        print('Returning a some god damn results from the tunnel')
 
 def listen_for_tweets(child_process):
     listener = TwitterListener()
