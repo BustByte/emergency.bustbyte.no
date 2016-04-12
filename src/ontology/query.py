@@ -10,12 +10,12 @@ class Query:
 
     @property
     def event(self):
-        return self._event.title() \
+        return self._event[0].upper() + self._event[1:] \
             if self._event else None
 
     @property
     def evidence(self):
-        return self._evidence.title() \
+        return self._evidence[0].upper() + self._evidence[1:] \
             if self._evidence else None
 
     @event.setter
