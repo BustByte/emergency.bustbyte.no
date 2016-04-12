@@ -39,18 +39,20 @@ class Repository:
         return tweet
 
     @classmethod
-    def read_multiple(cls, tweets):
+    def read_multiple(cls, tweets, query_object):
         tweets = tweets[:900]
         cur = Database.connection.cursor()
-        query = '''SELECT * FROM tweets 
-                JOIN users ON users.username = tweets.username 
+        query = '''SELECT * FROM tweets
                 JOIN tweet_in_place ON tweet_in_place.tweet_id=tweets.id
                 JOIN places on tweet_in_place.place_id=places.id
-                WHERE users.username NOT NULL AND '''
+                WHERE timestamp < :end AND timestamp > :start AND ('''
         for tweet_id in tweets:
             query += "tweets.id = '" + tweet_id + "' OR "
-        query += '1 = 0'
-        cur.execute(query)
+        query += '1 = 0)'
+        cur.execute(query, {
+            'end': query_object.end_date,
+            'start': query_object.start_date
+        })
         Database.connection.commit()
         rows = cur.fetchall()
         tweets = [Mapper.to_tweet(row) for row in rows]

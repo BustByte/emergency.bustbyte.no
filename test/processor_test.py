@@ -19,7 +19,7 @@ class TestProcessor(TestCase):
         self.user.username = 'opsenoslo'
 
         self.tweet = Tweet()
-        self.tweet.id = '4321'
+        self.tweet.id = '6969'
         self.tweet.user = self.user
         self.tweet.content = 'Vestby, Oslo: En hund har blitt påkjørt.'
         self.tweet.timestamp = '2014-01-01 10:10:10'
@@ -30,8 +30,8 @@ class TestProcessor(TestCase):
     def test_processor_creates_a_tweet_in_the_database(self):
         processor = Processor()
         processor.process(self.tweet)
-        stored_tweet = Repository.read('4321')
-        assert stored_tweet.id == '4321'
+        stored_tweet = Repository.read('6969')
+        assert stored_tweet.id == '6969'
 
     def test_processor_adds_a_position_to_the_tweet(self):
         processor = Processor()

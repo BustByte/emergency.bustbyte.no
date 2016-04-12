@@ -1,8 +1,9 @@
 from unittest import TestCase
 from unittest.mock import MagicMock
-from database import Database, Repository 
+from database import Database, Repository
 from user import User
 from tweet import Tweet
+from ontology import Query
 from position import Position
 
 class TestRepository(TestCase):
@@ -25,11 +26,18 @@ class TestRepository(TestCase):
         self.tweet.timestamp = '2014-01-01 10:10:10'
         self.tweet.position = self.position
 
-        self.query = {
+        self.search_query = {
             'query': None,
             'startDate': None,
             'endDate': None
         }
+
+        self.category_query = Query.from_json('''{
+            "evidence": "weapon",
+            "event": "fire",
+            "startDate": "2013-12-12",
+            "endDate": "2017-03-31"
+        }''')
 
     def tearDown(self):
         Database.tear_down()
@@ -66,145 +74,145 @@ class TestRepository(TestCase):
 
     def test_it_matches_place_if_it_has_a_symbol_behind_it(self):
         Repository.create(self.tweet)
-        self.query['query'] = 'Oslo'
-        self.query['startDate'] = '2013-12-31'
-        self.query['endDate'] = '2014-05-05'
-        results = Repository.search(self.query)
+        self.search_query['query'] = 'Oslo'
+        self.search_query['startDate'] = '2013-12-31'
+        self.search_query['endDate'] = '2014-05-05'
+        results = Repository.search(self.search_query)
         self.assertEqual(len(results), 1)
 
     def test_it_does_not_matche_tweet_if_it_is_published_outside_the_interval(self):
         self.tweet.content = 'Snakkes i Ås hadebra.'
         Repository.create(self.tweet)
-        self.query['query'] = 'Vestby'
-        self.query['startDate'] = '2010-01-31'
-        self.query['endDate'] = '2010-05-05'
-        results = Repository.search(self.query)
+        self.search_query['query'] = 'Vestby'
+        self.search_query['startDate'] = '2010-01-31'
+        self.search_query['endDate'] = '2010-05-05'
+        results = Repository.search(self.search_query)
         self.assertEqual(len(results), 0)
 
     def test_it_matches_place_wrapped_in_parenthesis(self):
         self.tweet.content = 'Snakkes i (Oslo) hadebra.'
         Repository.create(self.tweet)
-        self.query['query'] = 'Oslo'
-        self.query['startDate'] = '2013-12-31'
-        self.query['endDate'] = '2014-05-05'
-        results = Repository.search(self.query)
+        self.search_query['query'] = 'Oslo'
+        self.search_query['startDate'] = '2013-12-31'
+        self.search_query['endDate'] = '2014-05-05'
+        results = Repository.search(self.search_query)
         self.assertEqual(len(results), 1)
 
     def test_it_matches_superstring(self):
         self.tweet.content = 'Snakkes i Åsane hadebra.'
         Repository.create(self.tweet)
-        self.query['query'] = 'Ås'
-        self.query['startDate'] = '2013-12-31'
-        self.query['endDate'] = '2014-05-05'
-        results = Repository.search(self.query)
+        self.search_query['query'] = 'Ås'
+        self.search_query['startDate'] = '2013-12-31'
+        self.search_query['endDate'] = '2014-05-05'
+        results = Repository.search(self.search_query)
         self.assertEqual(len(results), 1)
 
     def test_it_matches_place_followed_by_exclamation_point(self):
         self.tweet.content = 'Snakkes i Ås! hadebra.'
         Repository.create(self.tweet)
-        self.query['query'] = 'Ås'
-        self.query['startDate'] = '2013-12-31'
-        self.query['endDate'] = '2014-05-05'
-        results = Repository.search(self.query)
+        self.search_query['query'] = 'Ås'
+        self.search_query['startDate'] = '2013-12-31'
+        self.search_query['endDate'] = '2014-05-05'
+        results = Repository.search(self.search_query)
         self.assertEqual(len(results), 1)
 
     def test_it_matches_place_followed_by_question_mark(self):
         self.tweet.content = 'Snakkes i Ås? hadebra.'
         Repository.create(self.tweet)
-        self.query['query'] = 'Ås'
-        self.query['startDate'] = '2013-12-31'
-        self.query['endDate'] = '2014-05-05'
-        results = Repository.search(self.query)
+        self.search_query['query'] = 'Ås'
+        self.search_query['startDate'] = '2013-12-31'
+        self.search_query['endDate'] = '2014-05-05'
+        results = Repository.search(self.search_query)
         self.assertEqual(len(results), 1)
 
     def test_it_matches_place_wrapped_by_dots(self):
         self.tweet.content = 'Snakkes i .Ås. hadebra.'
         Repository.create(self.tweet)
-        self.query['query'] = 'Ås'
-        self.query['startDate'] = '2013-12-31'
-        self.query['endDate'] = '2014-05-05'
-        results = Repository.search(self.query)
+        self.search_query['query'] = 'Ås'
+        self.search_query['startDate'] = '2013-12-31'
+        self.search_query['endDate'] = '2014-05-05'
+        results = Repository.search(self.search_query)
         self.assertEqual(len(results), 1)
 
     def test_it_matches_place_wrapped_by_commas(self):
         self.tweet.content = 'Snakkes i ,Ås, hadebra.'
         Repository.create(self.tweet)
-        self.query['query'] = 'Ås'
-        self.query['startDate'] = '2013-12-31'
-        self.query['endDate'] = '2014-05-05'
-        results = Repository.search(self.query)
+        self.search_query['query'] = 'Ås'
+        self.search_query['startDate'] = '2013-12-31'
+        self.search_query['endDate'] = '2014-05-05'
+        results = Repository.search(self.search_query)
         self.assertEqual(len(results), 1)
 
     def test_it_matches_place_wrapped_by_spaces(self):
         self.tweet.content = 'Snakkes i Ås hadebra.'
         Repository.create(self.tweet)
-        self.query['query'] = 'Ås'
-        self.query['startDate'] = '2013-12-31'
-        self.query['endDate'] = '2014-05-05'
-        results = Repository.search(self.query)
+        self.search_query['query'] = 'Ås'
+        self.search_query['startDate'] = '2013-12-31'
+        self.search_query['endDate'] = '2014-05-05'
+        results = Repository.search(self.search_query)
         self.assertEqual(len(results), 1)
 
     def test_it_matches_at_sign_followed_by_place(self):
         self.tweet.content = 'Snakkes i @Ås hadebra.'
         Repository.create(self.tweet)
-        self.query['query'] = 'Ås'
-        self.query['startDate'] = '2013-12-31'
-        self.query['endDate'] = '2014-05-05'
-        results = Repository.search(self.query)
+        self.search_query['query'] = 'Ås'
+        self.search_query['startDate'] = '2013-12-31'
+        self.search_query['endDate'] = '2014-05-05'
+        results = Repository.search(self.search_query)
         self.assertEqual(len(results), 1)
 
     def test_it_matches_hashtag_followed_by_place(self):
         self.tweet.content = 'Snakkes i #Ås hadebra.'
         Repository.create(self.tweet)
-        self.query['query'] = 'Ås'
-        self.query['startDate'] = '2013-12-31'
-        self.query['endDate'] = '2014-05-05'
-        results = Repository.search(self.query)
+        self.search_query['query'] = 'Ås'
+        self.search_query['startDate'] = '2013-12-31'
+        self.search_query['endDate'] = '2014-05-05'
+        results = Repository.search(self.search_query)
         self.assertEqual(len(results), 1)
 
     def test_it_matches_place_followed_by_colon(self):
         self.tweet.content = 'Snakkes i Ås: hadebra.'
         Repository.create(self.tweet)
-        self.query['query'] = 'Ås'
-        self.query['startDate'] = '2013-12-31'
-        self.query['endDate'] = '2014-05-05'
-        results = Repository.search(self.query)
+        self.search_query['query'] = 'Ås'
+        self.search_query['startDate'] = '2013-12-31'
+        self.search_query['endDate'] = '2014-05-05'
+        results = Repository.search(self.search_query)
         self.assertEqual(len(results), 1)
 
     def test_it_matches_place_followed_by_semi_colon(self):
         self.tweet.content = 'Snakkes i Ås; hadebra.'
         Repository.create(self.tweet)
-        self.query['query'] = 'Ås'
-        self.query['startDate'] = '2013-12-31'
-        self.query['endDate'] = '2014-05-05'
-        results = Repository.search(self.query)
+        self.search_query['query'] = 'Ås'
+        self.search_query['startDate'] = '2013-12-31'
+        self.search_query['endDate'] = '2014-05-05'
+        results = Repository.search(self.search_query)
         self.assertEqual(len(results), 1)
 
     def test_it_matches_place_followed_by_slash(self):
         self.tweet.content = 'Snakkes i Ås/Vestby hadebra.'
         Repository.create(self.tweet)
-        self.query['query'] = 'Ås'
-        self.query['startDate'] = '2013-12-31'
-        self.query['endDate'] = '2014-05-05'
-        results = Repository.search(self.query)
+        self.search_query['query'] = 'Ås'
+        self.search_query['startDate'] = '2013-12-31'
+        self.search_query['endDate'] = '2014-05-05'
+        results = Repository.search(self.search_query)
         self.assertEqual(len(results), 1)
 
     def test_it_matches_slash_followed_by_place(self):
         self.tweet.content = 'Snakkes i Ås/Vestby hadebra.'
         Repository.create(self.tweet)
-        self.query['query'] = 'Vestby'
-        self.query['startDate'] = '2013-12-31'
-        self.query['endDate'] = '2014-05-05'
-        results = Repository.search(self.query)
+        self.search_query['query'] = 'Vestby'
+        self.search_query['startDate'] = '2013-12-31'
+        self.search_query['endDate'] = '2014-05-05'
+        results = Repository.search(self.search_query)
         self.assertEqual(len(results), 1)
 
     def test_it_matches_place_followed_by_quote(self):
         self.tweet.content = "Snakkes i Vestby's gater hadebra."
         Repository.create(self.tweet)
-        self.query['query'] = 'Vestby'
-        self.query['startDate'] = '2013-12-31'
-        self.query['endDate'] = '2014-05-05'
-        results = Repository.search(self.query)
+        self.search_query['query'] = 'Vestby'
+        self.search_query['startDate'] = '2013-12-31'
+        self.search_query['endDate'] = '2014-05-05'
+        results = Repository.search(self.search_query)
         self.assertEqual(len(results), 1)
 
     def test_it_can_read_multiple_tweets(self):
@@ -213,5 +221,14 @@ class TestRepository(TestCase):
         Repository.create(self.tweet)
         self.tweet.id = '54321'
         Repository.create(self.tweet)
-        results = Repository.read_multiple(['1234','4321'])
+        results = Repository.read_multiple(['1234', '4321'], self.category_query)
         self.assertEqual(len(results), 2)
+
+    def test_it_can_read_multiple_tweets_between_dates(self):
+        Repository.create(self.tweet)
+        self.tweet.id = '4321'
+        self.tweet.timestamp = '2016-01-01 10:10:10'
+        Repository.create(self.tweet)
+        self.category_query.end_date = '2014-03-31'
+        results = Repository.read_multiple(['1234', '4321'], self.category_query)
+        self.assertEqual(len(results), 1)

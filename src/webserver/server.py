@@ -11,7 +11,7 @@ from listeners.twitter_listener import *
 from database.repository import Repository
 from tweet.json_generator import Json
 from processor import Processor
-from ontology import Tunnel
+from ontology import Tunnel, Query
 
 from multiprocessing import Process, Pipe
 
@@ -29,13 +29,15 @@ class BroadcastServerProtocol(WebSocketServerProtocol):
         if not isBinary:
             query = json.loads(payload.decode('utf8'))
 
-            if query.type == 'category':
+            if query['type'] == 'category':
                 query = Query.from_json(payload.decode('utf8'))
-                tweet_ids = Tunnel.pull(query)
-                tweets = Repository.read_multiple(tweet_ids)
-                self.factory.category(tweets, self)
+                print("Querying ontology with event: %s and evidence: %s" % (query.event, query.evidence))
+                tweet_ids = Tunnel().pull(query)
+                print ("Received %s from the ontology" % (len(tweet_ids)))
+                tweets = Repository.read_multiple(tweet_ids, query)
+                self.factory.category(tweets, self, query)
 
-            elif query.type == 'search':
+            elif query['type'] == 'search':
                 self.factory.search(query, self)
 
     def connectionLost(self, reason):
@@ -57,8 +59,8 @@ class BroadcastServerFactory(WebSocketServerFactory):
     def check_for_tweets(self):
         if (self.twitter_process.poll()):
             self.save_and_broadcast_tweet(self.twitter_process.recv())
-        # Check for new tweets every second
-        reactor.callLater(1, self.check_for_tweets)
+        # Check for new tweets every other second
+        reactor.callLater(2, self.check_for_tweets)
 
     def save_and_broadcast_tweet(self, tweet):
         position_tweet = self.processor.process(tweet)
@@ -83,8 +85,7 @@ class BroadcastServerFactory(WebSocketServerFactory):
     def search(self, query, client):
         # The user now enters search mode, and will no longer receive live updates.
         self.unregister(client)
-        # SEARCH IN DATABASE HERE BASED ON QUERY (searchString, startDate, endDate).
-        # Return a maximum number to avoid overfilling the map?
+
         tweets = Repository.search(query)
         json_tweets = Json.generate_json(tweets)
 
@@ -99,10 +100,19 @@ class BroadcastServerFactory(WebSocketServerFactory):
 
         client.sendMessage(json.dumps({'tweets': json_tweets}).encode('utf8'))
 
-    def category(self, results, client):
+    def category(self, results, client, query):
+        # The user now enters search mode, and will no longer receive live updates.
+        self.unregister(client)
+
         json_tweets = Json.generate_json(results)
         client.sendMessage(json.dumps({'tweets': json_tweets}).encode('utf8'))
-        print('Returning a some god damn results from the tunnel')
+        print ('Returning %s tweets between %s and %s.' %
+            (
+                len(results),
+                query.start_date,
+                query.end_date
+            )
+        )
 
 def listen_for_tweets(child_process):
     listener = TwitterListener()
