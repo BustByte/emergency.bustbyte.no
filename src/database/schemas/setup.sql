@@ -35,12 +35,17 @@ CREATE TABLE `commune_in_district` (
 	FOREIGN KEY(`district_id`) REFERENCES `districts`(`id`)
 );
 
-CREATE TABLE `tweet_in_place` (
-    `tweet_id`  INTEGER NOT NULL,
-    `place_id`  INTEGER NOT NULL,
-    FOREIGN KEY(tweet_id) REFERENCES tweets(id),
-    FOREIGN KEY(place_id) REFERENCES places(id)
+CREATE TABLE place_tweet (
+    id text,
+    username text,
+    content text,
+    timestamp text,
+    latitude text,
+    longitude text,
+    place_id INTEGER
 );
+
+CREATE INDEX tweet_index ON place_tweet(id);
 
 -- Only run if under test
 INSERT INTO users (username, district) VALUES ('opsenoslo', 1);
@@ -48,5 +53,5 @@ INSERT INTO districts (id, name) VALUES (1, 'Øst');
 INSERT INTO communes (id, name) VALUES (1, 'Oslo');
 INSERT INTO commune_in_district (commune_id, district_id) VALUES (1, 1);
 INSERT INTO places (id, commune_id, name, latitude, longitude) VALUES (1, 1, "Vestby", "59.3434", "18.3434");
-INSERT INTO tweet_in_place (tweet_id, place_id) VALUES ('1234', 1);
-INSERT INTO tweet_in_place (tweet_id, place_id) VALUES ('4321', 1);
+INSERT INTO place_tweet (id, username, content, timestamp, latitude, longitude, place_id) VALUES ('1234', 'opsenoslo', 'Hello world Oslo: skal velges.', '2014-01-01 10:10:10', '59.3434', '18.3434', 1);
+INSERT INTO place_tweet (id, username, content, timestamp, latitude, longitude, place_id) VALUES ('4321', 'opsenoslo', 'Vestby Ås Son er på fjellet.', '2014-01-01 10:10:10', '59.3434', '18.3434', 1);

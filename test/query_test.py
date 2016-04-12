@@ -14,6 +14,11 @@ class TestQuery(TestCase):
         query = Query.from_json(json)
         self.assertEqual(query.event, 'Robbery')
 
+    def test_it_does_not_mess_up_internal_capitalization_only_first_letter(self):
+        json = '''{ "evidence": "knife", "event": "trafficCollision", "startDate": "2014-01-01", "endDate": "2015-01-01"  }'''
+        query = Query.from_json(json)
+        self.assertEqual(query.event, 'TrafficCollision')
+
     def test_it_ignores_event_if_it_is_not_provided(self):
         json = '''{ "evidence": "knife", "event": false, "startDate": "2014-01-01", "endDate": "2015-01-01"  }'''
         query = Query.from_json(json)

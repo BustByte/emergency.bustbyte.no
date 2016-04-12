@@ -46,3 +46,13 @@ DELETE FROM tweet_in_place
 SELECT COUNT(DISTINCT tweet_id) AS place FROM tweet_in_place;
 SELECT COUNT(*) FROM tweet_in_place;
 ````
+
+### Merge tweets and position into a single table
+````sql
+INSERT INTO place_tweet (id, username, content, timestamp, latitude, longitude, place_id) 
+	SELECT tweets.id, tweets.username, tweets.content, tweets.timestamp, places.latitude, places.longitude, places.id
+		FROM tweets 
+		JOIN users ON users.username = tweets.username 
+		LEFT OUTER JOIN tweet_in_place ON tweets.id = tweet_in_place.tweet_id
+		LEFT OUTER JOIN places on tweet_in_place.place_id=places.id
+````

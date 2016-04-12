@@ -69,6 +69,18 @@ class Mapper:
         return place
 
     @classmethod
+    def to_position(cls, row):
+        position = Position()
+
+        if 'latitude' in row.keys():
+            position.latitude = row['latitude']
+
+        if 'longitude' in row.keys():
+            position.longitude = row['longitude']
+
+        return position
+
+    @classmethod
     def convert_timestamp(cls, timestamp):
         try:
             return datetime.strptime(timestamp, '%Y-%m-%d %H:%M:%S')

@@ -22,7 +22,7 @@ class TestRepository(TestCase):
         self.tweet = Tweet()
         self.tweet.id = '1234'
         self.tweet.user = self.user
-        self.tweet.content = 'Hello world Oslo: skal velges.'
+        self.tweet.content = 'Hva skjer?'
         self.tweet.timestamp = '2014-01-01 10:10:10'
         self.tweet.position = self.position
 
@@ -42,21 +42,12 @@ class TestRepository(TestCase):
     def tearDown(self):
         Database.tear_down()
 
-    def test_it_can_save_a_tweet(self):
-        Repository.create(self.tweet)
-        stored_tweet = Repository.read('1234')
-        assert stored_tweet.id == '1234'
-        assert stored_tweet.content == 'Hello world Oslo: skal velges.'
-
     def test_it_also_saves_the_user_account(self):
         Repository.create(self.tweet)
         stored_tweet = Repository.read('1234')
-        assert stored_tweet.user.name == 'Oslo Operasjonssentral'
         assert stored_tweet.user.username == 'opsenoslo'
 
     def test_it_get_all_the_tweets(self):
-        Repository.create(self.tweet)
-        Repository.create(self.tweet)
         stored_tweets = Repository.all()
         assert len(stored_tweets) == 2
 
@@ -225,10 +216,10 @@ class TestRepository(TestCase):
         self.assertEqual(len(results), 2)
 
     def test_it_can_read_multiple_tweets_between_dates(self):
-        Repository.create(self.tweet)
-        self.tweet.id = '4321'
-        self.tweet.timestamp = '2016-01-01 10:10:10'
-        Repository.create(self.tweet)
-        self.category_query.end_date = '2014-03-31'
         results = Repository.read_multiple(['1234', '4321'], self.category_query)
-        self.assertEqual(len(results), 1)
+        self.assertEqual(len(results), 2)
+
+    def test_it_can_read_positions(self):
+        position = Repository.get_position(1)
+        assert position.latitude == '59.3434'
+        assert position.longitude == '18.3434'

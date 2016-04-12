@@ -26,21 +26,13 @@ class Repository:
     @classmethod
     def read(cls, tweet_id):
         cur = Database.connection.cursor()
-        cur.execute('SELECT * FROM place_tweet WHERE id = :id',
-            {'id': str(tweet_id)})
-        Database.connection.commit()
-        row = cur.fetchone()
-        if (row == None):
-            tweet = Repository.read_orignal_tweet(tweet_id)
-        else:
-            tweet = Mapper.to_tweet(row)
-        return tweet
-
-    @classmethod
-    def read_orignal_tweet(cls, tweet_id):
-        cur = Database.connection.cursor()
-        cur.execute('SELECT * FROM tweets WHERE id = :id',
-            {'id': str(tweet_id)})
+        cur.execute('''
+        SELECT * FROM tweets 
+            JOIN users ON users.username = tweets.username 
+            LEFT OUTER JOIN tweet_in_place ON tweet_in_place.tweet_id=tweets.id
+            LEFT OUTER JOIN places on tweet_in_place.place_id=places.id
+            WHERE tweets.id = :id AND users.username not NULL
+        ''', {'id': str(tweet_id)})
         Database.connection.commit()
         row = cur.fetchone()
         tweet = Mapper.to_tweet(row)
@@ -50,11 +42,12 @@ class Repository:
     def read_multiple(cls, tweets, query_object):
         tweets = tweets[:900]
         cur = Database.connection.cursor()
-        query = '''SELECT * FROM place_tweet WHERE timestamp < :end AND timestamp > :start
-            AND latitude NOT NULL and longitude NOT NULL AND
-        ('''
+        query = '''SELECT * FROM tweets
+                JOIN tweet_in_place ON tweet_in_place.tweet_id=tweets.id
+                JOIN places on tweet_in_place.place_id=places.id
+                WHERE timestamp < :end AND timestamp > :start AND ('''
         for tweet_id in tweets:
-            query += "id = '" + tweet_id + "' OR "
+            query += "tweets.id = '" + tweet_id + "' OR "
         query += '1 = 0)'
         cur.execute(query, {
             'end': query_object.end_date,
@@ -66,37 +59,17 @@ class Repository:
         return tweets
 
     @classmethod
-    def get_position(cls, place_id):
+    def map_place_to_tweet(cls, tweet_id, place_id):
         cur = Database.connection.cursor()
-        cur.execute("SELECT * FROM places WHERE id = :place", {
-            'place': place_id
-        })
-        Database.connection.commit()
-        row = cur.fetchone()
-        position = Mapper.to_position(row)
-        return position
-
-    @classmethod
-    def map_place_to_tweet(cls, tweet, place_id):
-        cur = Database.connection.cursor()
-        position = Repository.get_position(place_id)
-        row = {'tweet_id': str(tweet.id), 'place_id': place_id}
-
+        row = {'tweet_id': str(tweet_id), 'place_id': place_id}
         try:
+            row = defaultdict(lambda: None, row)
 
             cur.execute('''
-                INSERT INTO place_tweet (id, username, content, timestamp, latitude, longitude, place_id)
-                VALUES  (:tweet_id, :username, :content, :timestamp, :latitude, :longitude, :place_id)
-                ''',
-                {
-                    'tweet_id': tweet.id,
-                    'username': tweet.user.username,
-                    'content': tweet.content,
-                    'timestamp': tweet.timestamp,
-                    'latitude': position.latitude,
-                    'longitude': position.longitude,
-                    'place_id': place_id
-                }
+                INSERT INTO tweet_in_place
+                (tweet_id, place_id) values
+                (:tweet_id, :place_id)''',
+                row 
             )
 
         except sqlite3.IntegrityError:
@@ -108,10 +81,10 @@ class Repository:
     def search(cls, query_object):
         cur = Database.connection.cursor()
         query = query_object.get('query')
-        cur.execute('''SELECT * FROM place_tweet
-            WHERE content LIKE :query AND timestamp < :end AND timestamp > :start
-            AND latitude NOT NULL AND longitude NOT NULL
-            LIMIT 500''',
+        cur.execute('''SELECT * FROM tweets
+            JOIN tweet_in_place ON tweet_in_place.tweet_id = tweets.id
+            JOIN places ON tweet_in_place.place_id = places.id
+            WHERE content LIKE :query AND timestamp < :end AND timestamp > :start LIMIT 500''',
             {
                 #'query': '*[ ,./:;#@(][{0}{1}]{2}[ ,.\!?:;/\')]*'.format(query[0].lower(), query[0].upper(), query[1:]),
                 'query': '%{0}%'.format(query),
@@ -127,20 +100,7 @@ class Repository:
     @classmethod
     def all(cls):
         cur = Database.connection.cursor()
-        cur.execute('''SELECT * FROM place_tweet''')
-        Database.connection.commit()
-        rows = cur.fetchall()
-        tweets = [Mapper.to_tweet(row) for row in rows]
-        return tweets
-
-    @classmethod
-    def all_between_dates(cls, query_object):
-        cur = Database.connection.cursor()
-        query = '''SELECT * FROM place_tweet WHERE timestamp < :end AND timestamp > :start AND latitude NOT NULL AND longitude NOT NULL'''
-        cur.execute(query, {
-            'end': query_object.end_date,
-            'start': query_object.start_date
-        })
+        cur.execute('''SELECT * FROM users JOIN tweets on users.username = tweets.username''')
         Database.connection.commit()
         rows = cur.fetchall()
         tweets = [Mapper.to_tweet(row) for row in rows]
