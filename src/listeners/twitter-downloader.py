@@ -1,25 +1,47 @@
 import os
 from datetime import datetime, timedelta
 from twitter import *
-from tweet import Tweet
-from user import User
+from tweet.tweet import Tweet
+from user.user import User
 from twitter_listener import OAuthSettings
 from database import Database
+from processor import Processor
 
-users = """politihedmark
-Opssunnmore
-opsenfollo
-politietostfold
-politiopssbusk
-OPSostfinnmark
-PolitiOstfldOPS
-HedmarkOPS
-politiNTrondops
+users = """OPSostfinnmark
+PolitiVestfinnm
 polititroms
-RomerikePoliti
+politiMHPD
+politiMHPD
+Saltenpolitiet
+HelgelandOPS
+politiOpsSTPD
+politiNTrondops
+Opssunnmore
+412278318
+PolitiNoRoOps
+Hordalandpoliti
+politietsognfj
+Rogalandops
+HaugSunnOps
+AgderOPS
+opsnbuskerud
+politiopssbusk
+PolitiVestfold
 polititelemark
+oslopolitiops
+politietoslo
 ABpolitiops
-politietoslo""".split('\n')
+opsenfollo
+RomerikePoliti
+PolitiOstfldOPS
+politietostfold
+OPSGudbrandsdal
+politihedmark
+HedmarkOPS
+PolitiVestoppla
+""".split('\n')
+
+lastest_tweet_id = float(704318205976813572)
 
 class TwitterDownloader:
 
@@ -33,7 +55,7 @@ class TwitterDownloader:
         else:
             tweets = self.twitter_download.statuses.user_timeline(count=200, screen_name=username)
 
-        return [tweet for tweet in tweets if not tweet['retweeted']]
+        return [convert(tweet) for tweet in tweets if not tweet['retweeted']]
 
     def convert(self, twitter_object):
         try:
@@ -43,7 +65,7 @@ class TwitterDownloader:
             tweet.content = twitter_object['text']
             tweet.timestamp = self.convert_to_sane_date(twitter_object['created_at'])
         except KeyError:
-            pass 
+            pass
         return tweet
 
     def convert_to_sane_date(self, insane_date):
@@ -60,17 +82,14 @@ class TwitterDownloader:
 
     def listen_to_twitter(self, username):
         tweets = self.get_tweets(username)
-        self.save_to_db(tweets)
-        latest_id = None
+        Processor.process_many(tweets)
+        latest_id = lastest_tweet_id + 1
 
-        while True:
-            tweets = self.get_tweets(username, latest_id) 
-            latest_id = tweets[len(tweets)-1]['id_str']
-            number_saved = self.save_to_db(tweets)
-            if number_saved < 3:
-                break 
+        while latest_id > lastest_tweet_id:
+            tweets = self.get_tweets(username, latest_id)
+            latest_id = float(tweets[len(tweets)-1]['id_str'])
+            Processor.process_many(tweets)
 
-Database.setup()
 downloader = TwitterDownloader()
 
 for user in users:

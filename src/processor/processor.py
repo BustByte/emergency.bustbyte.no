@@ -11,6 +11,9 @@ class Processor:
     def process(self, tweet):
         stored_tweet = Repository.create(tweet)
 
+        if stored_tweet is None:
+            return None
+
         username = tweet.user.username
         sorted_scores = self.get_potential_places(tweet)
         actual_places = self.places[username]
