@@ -313,15 +313,25 @@ $(document).ready(function(event) {
 
 	// Click listeners on category buttons
 	$('.category-buttons .evidence i').click(function(){
+		var currentId  = $('.category-buttons .evidence i.selected').attr('id');
 		$('.category-buttons .evidence i').removeClass('selected');
-		$(this).addClass('selected');
-		selectedEvidence = $(this).attr('id');
+		if ($(this).attr('id') == selectedEvidence)
+			selectedEvidence = false;
+		else{
+			$(this).addClass('selected');
+			selectedEvidence = $(this).attr('id');
+		}
 	});
 
 	$('.category-buttons .events i').click(function(){
+		var currentId  = $('.category-buttons .events i.selected').attr('id');
 		$('.category-buttons .events i').removeClass('selected');
-		$(this).addClass('selected');
-		selectedEvent = $(this).attr('id');
+		if ($(this).attr('id') == selectedEvent)
+			selectedEvent = false;
+		else{
+			$(this).addClass('selected');
+			selectedEvent = $(this).attr('id');
+		}
 	});
 
 	// Change from search to categories and back
