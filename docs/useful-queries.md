@@ -49,7 +49,7 @@ SELECT COUNT(*) FROM tweet_in_place;
 
 ### Merge tweets and position into a single table
 ````sql
-INSERT INTO place_tweet (tweet_id, username, content, timestamp, latitude, longitude) 
+INSERT INTO place_tweet (id, username, content, timestamp, latitude, longitude) 
 	SELECT tweets.id, tweets.username, tweets.content, tweets.timestamp, places.latitude, places.longitude FROM tweets 
 		JOIN users ON users.username = tweets.username 
 		LEFT OUTER JOIN tweet_in_place ON tweets.id = tweet_in_place.tweet_id
