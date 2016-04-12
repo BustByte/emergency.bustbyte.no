@@ -90,14 +90,14 @@ class TestRepository(TestCase):
         results = Repository.search(self.query)
         self.assertEqual(len(results), 1)
 
-    def test_it_does_not_match_superstring(self):
+    def test_it_matches_superstring(self):
         self.tweet.content = 'Snakkes i Åsane hadebra.'
         Repository.create(self.tweet)
         self.query['query'] = 'Ås'
         self.query['startDate'] = '2013-12-31'
         self.query['endDate'] = '2014-05-05'
         results = Repository.search(self.query)
-        self.assertEqual(len(results), 0)
+        self.assertEqual(len(results), 1)
 
     def test_it_matches_place_followed_by_exclamation_point(self):
         self.tweet.content = 'Snakkes i Ås! hadebra.'
@@ -206,3 +206,12 @@ class TestRepository(TestCase):
         self.query['endDate'] = '2014-05-05'
         results = Repository.search(self.query)
         self.assertEqual(len(results), 1)
+
+    def test_it_can_read_multiple_tweets(self):
+        Repository.create(self.tweet)
+        self.tweet.id = '4321'
+        Repository.create(self.tweet)
+        self.tweet.id = '54321'
+        Repository.create(self.tweet)
+        results = Repository.read_multiple(['1234','4321'])
+        self.assertEqual(len(results), 2)

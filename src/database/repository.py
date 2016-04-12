@@ -39,6 +39,23 @@ class Repository:
         return tweet
 
     @classmethod
+    def read_multiple(cls, tweets):
+        cur = Database.connection.cursor()
+        query = '''SELECT * FROM tweets 
+                JOIN users ON users.username = tweets.username 
+                LEFT OUTER JOIN tweet_in_place ON tweet_in_place.tweet_id=tweets.id
+                LEFT OUTER JOIN places on tweet_in_place.place_id=places.id
+                WHERE users.username NOT NULL AND '''
+        for tweet_id in tweets:
+            query += "tweets.id = '" + tweet_id + "' OR "
+        query += '1 = 0'
+        cur.execute(query)
+        Database.connection.commit()
+        rows = cur.fetchall()
+        tweets = [Mapper.to_tweet(row) for row in rows]
+        return tweets
+
+    @classmethod
     def map_place_to_tweet(cls, tweet_id, place_id):
         cur = Database.connection.cursor()
         row = {'tweet_id': str(tweet_id), 'place_id': place_id}
@@ -64,9 +81,10 @@ class Repository:
         cur.execute('''SELECT * FROM tweets
             JOIN tweet_in_place ON tweet_in_place.tweet_id = tweets.id
             JOIN places ON tweet_in_place.place_id = places.id
-            WHERE content GLOB :query AND timestamp < :end AND timestamp > :start LIMIT 500''',
+            WHERE content LIKE :query AND timestamp < :end AND timestamp > :start LIMIT 500''',
             {
-                'query': '*[ ,./:;#@(][{0}{1}]{2}[ ,.\!?:;/\')]*'.format(query[0].lower(), query[0].upper(), query[1:]),
+                #'query': '*[ ,./:;#@(][{0}{1}]{2}[ ,.\!?:;/\')]*'.format(query[0].lower(), query[0].upper(), query[1:]),
+                'query': '%{0}%'.format(query),
                 'end'  : query_object.get('endDate'),
                 'start': query_object.get('startDate')
             }
@@ -97,7 +115,7 @@ class Repository:
         )
         Database.connection.commit()
         rows = cur.fetchall()
-        
+
         for row in rows:
             place = Mapper.to_place(row)
 
