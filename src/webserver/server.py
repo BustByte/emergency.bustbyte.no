@@ -35,7 +35,7 @@ class BroadcastServerProtocol(WebSocketServerProtocol):
                 tweets = Repository.read_multiple(tweet_ids)
                 self.factory.category(tweets, self)
 
-            else if query.type == 'search':
+            elif query.type == 'search':
                 self.factory.search(query, self)
 
     def connectionLost(self, reason):
