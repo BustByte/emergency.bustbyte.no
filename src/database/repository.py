@@ -40,11 +40,12 @@ class Repository:
 
     @classmethod
     def read_multiple(cls, tweets):
+        tweets = tweets[:900]
         cur = Database.connection.cursor()
         query = '''SELECT * FROM tweets 
                 JOIN users ON users.username = tweets.username 
-                LEFT OUTER JOIN tweet_in_place ON tweet_in_place.tweet_id=tweets.id
-                LEFT OUTER JOIN places on tweet_in_place.place_id=places.id
+                JOIN tweet_in_place ON tweet_in_place.tweet_id=tweets.id
+                JOIN places on tweet_in_place.place_id=places.id
                 WHERE users.username NOT NULL AND '''
         for tweet_id in tweets:
             query += "tweets.id = '" + tweet_id + "' OR "
