@@ -47,7 +47,7 @@ class Processor:
             self.process(tweet)
 
     def link_tweet_to_place(self, tweet, place):
-        return Repository.map_place_to_tweet(tweet.id, place.id) 
+        return Repository.map_place_to_tweet(tweet, place.id)
 
     def get_potential_places(self, tweet):
         scores = {}
