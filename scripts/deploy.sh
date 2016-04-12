@@ -6,4 +6,5 @@ ssh michael@emergency.bustbyte.no <<EOF
     git fetch origin
     git reset --hard origin/master
     make install
+    ./scripts/start-webserver.sh
 EOF
