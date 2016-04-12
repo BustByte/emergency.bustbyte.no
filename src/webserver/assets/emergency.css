@@ -202,3 +202,29 @@ div.input-group input[type="submit"]{
 .option-box:not(.active-search) .toggle-category-button, .option-box:not(.active-search) #search{
 	display: none;
 }
+
+.category-buttons i {
+	position: relative;
+}
+
+.category-buttons i::after {
+    content: attr(data-tip) ;   
+     
+    font-size: 13px;
+    position:absolute;
+    z-index: 999;
+    white-space:nowrap;
+    bottom:9999px;
+    background:#000;
+    color:#e0e0e0;
+    padding:0px 7px;
+    line-height: 24px;
+    height: 24px;
+    opacity: 0;  
+    transition:opacity 0.4s ease-out; 
+}
+     
+.category-buttons i:hover::after {
+    opacity: 1;
+    bottom: -30px;
+ }
