@@ -338,6 +338,23 @@ $(document).ready(function(event) {
 	$('.toggle-button').click(function(){
 		$('.option-box').toggleClass('active-search');
 	});
+
+	// Listeners to coordinate dates.
+	$('#search input[name="start"]').change(function(){
+		$('#category input[name="start"]').val($(this).val());
+	});
+
+	$('#search input[name="end"]').change(function(){
+		$('#category input[name="end"]').val($(this).val());
+	});
+
+	$('#category input[name="start"]').change(function(){
+		$('#search input[name="start"]').val($(this).val());
+	});
+
+	$('#category input[name="end"]').change(function(){
+		$('#search input[name="end"]').val($(this).val());
+	});
 });
 
 
