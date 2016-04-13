@@ -58,7 +58,7 @@ class TwitterDownloader:
         else:
             tweets = self.twitter_download.statuses.user_timeline(since_id=since_id, count=200, screen_name=username)
 
-        return [self.convert(tweet) for tweet in tweets if not tweet['retweeted']]
+        return [self.convert(tweet) for tweet in tweets if not 'retweeted_status' in tweet]
 
     def convert(self, twitter_object):
         try:
@@ -76,9 +76,9 @@ class TwitterDownloader:
         total_for_user = 0
         while True:
             if latest_id:
-                tweets = self.get_tweets(username, last_tweet_id_in_db, latest_id)
+                tweets = self.get_tweets(username=username, since_id=last_tweet_id_in_db, max_id=latest_id)
             else:
-                tweets = self.get_tweets(username, last_tweet_id_in_db)
+                tweets = self.get_tweets(username=username, since_id=last_tweet_id_in_db)
 
             total_for_user += len(tweets)
             print("Received %s new tweets, in total %s for %s." % (len(tweets), total_for_user, username))
