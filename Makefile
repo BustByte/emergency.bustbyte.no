@@ -7,6 +7,7 @@ SRC_DIR=src
 TEST_DIR=test
 TEST_FILES=*_test.py
 TWISTED_SERVER=$(SRC_DIR)/webserver/server.py
+TWITTER_DOWNLOAD=$(SRC_DIR)/listeners/twitter-downloader.py
 MODULES=$(shell pwd)/$(SRC_DIR)
 DATABASE_DIR=$(SRC_DIR)/database
 DATABASE_NAME=tweets.db
@@ -42,6 +43,13 @@ download-database:
 
 upload-database:
 	@curl --upload-file $(DATABASE_FILE) $(TRANSFER_SH)/$(DATABASE_NAME)
+
+download-tweets: export PYTHONPATH=$(MODULES)
+download-tweets: export PYTHONDONTWRITEBYTECODE="false"
+download-tweets:
+	$(PYTHON) $(TWITTER_DOWNLOAD)
+
+download-tweets: clean
 
 clean:
 	-@find . -name '.DS_Store'   -delete

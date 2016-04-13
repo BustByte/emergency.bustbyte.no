@@ -1,61 +1,64 @@
 import os
+import sys
+from twisted.python import log
 from datetime import datetime, timedelta
 from twitter import *
 from tweet.tweet import Tweet
-from user.user import User
-from twitter_listener import OAuthSettings
-from database import Database
-from processor import Processor
+from user import User
+from listeners.twitter_listener import OAuthSettings
+from listeners import TimeConverter
+from database.database import Database
+from processor.processor import Processor
 
-users = """OPSostfinnmark
-PolitiVestfinnm
-polititroms
-politiMHPD
-politiMHPD
-Saltenpolitiet
-HelgelandOPS
-politiOpsSTPD
-politiNTrondops
-Opssunnmore
-412278318
-PolitiNoRoOps
-Hordalandpoliti
-politietsognfj
-Rogalandops
-HaugSunnOps
+users = """ABpolitiops
 AgderOPS
+HaugSunnOps
+HedmarkOPS
+HelgelandOPS
+Hordalandpoliti
+opsenfollo
+OPSGudbrandsdal
 opsnbuskerud
-politiopssbusk
-PolitiVestfold
-polititelemark
+OPSostfinnmark
+Opssunnmore
 oslopolitiops
 politietoslo
-ABpolitiops
-opsenfollo
-RomerikePoliti
-PolitiOstfldOPS
 politietostfold
-OPSGudbrandsdal
+politietsognfj
 politihedmark
-HedmarkOPS
+politiMHPD
+PolitiNoRoOps
+politiNTrondops
+politiopssbusk
+politiOpsSTPD
+PolitiOstfldOPS
+polititelemark
+polititroms
+PolitiVestfinnm
+PolitiVestfold
 PolitiVestoppla
-""".split('\n')
+Rogalandops
+RomerikePoliti
+Saltenpolitiet""".split('\n')
 
-lastest_tweet_id = float(704318205976813572)
+last_tweet_id_in_db = 704318205976813572
 
 class TwitterDownloader:
 
     def __init__(self):
+        print("Booting tweet processor...")
+        self.processor = Processor()
+        print("Tweet processor successfully booted")
         self.authSettings = OAuthSettings()
         self.twitter_download = Twitter(auth=self.authSettings.get_oauth_settings())
 
-    def get_tweets(self, username, max_id=None):
+    def get_tweets(self, username, since_id=None, max_id=None):
         if max_id:
-            tweets = self.twitter_download.statuses.user_timeline(max_id=max_id, count=200, screen_name=username)
+            tweets = self.twitter_download.statuses.user_timeline(since_id=since_id, max_id=max_id, count=200, screen_name=username)
         else:
-            tweets = self.twitter_download.statuses.user_timeline(count=200, screen_name=username)
+            tweets = self.twitter_download.statuses.user_timeline(since_id=since_id, count=200, screen_name=username)
 
-        return [convert(tweet) for tweet in tweets if not tweet['retweeted']]
+        return [self.convert(tweet) for tweet in tweets if not tweet['retweeted']]
 
     def convert(self, twitter_object):
         try:
@@ -63,35 +66,38 @@ class TwitterDownloader:
             tweet.user = User(twitter_object['user']['name'], twitter_object['user']['screen_name'])
             tweet.id = twitter_object['id_str']
             tweet.content = twitter_object['text']
-            tweet.timestamp = self.convert_to_sane_date(twitter_object['created_at'])
+            tweet.timestamp = TimeConverter.twitter_time_to_date_string(twitter_object['created_at'])
         except KeyError:
             pass
         return tweet
 
-    def convert_to_sane_date(self, insane_date):
-        insane_date = insane_date[4:]
-        sane_date = datetime.strptime(insane_date, '%b %d %H:%M:%S +0000 %Y')
-        added_hour = sane_date + timedelta(hours=1)
-        return added_hour
+    def download_user_tweets(self, username):
+        latest_id = None
+        total_for_user = 0
+        while True:
+            if latest_id:
+                tweets = self.get_tweets(username, last_tweet_id_in_db, latest_id)
+            else:
+                tweets = self.get_tweets(username, last_tweet_id_in_db)
 
-    def save_to_db(self, external_tweets):
-        print("Saved %d tweets to the db" % len(external_tweets))
-        internal_tweets = [self.convert(external_tweet) for external_tweet in external_tweets]
-        Database.save_all(internal_tweets)
-        return len(external_tweets)
+            total_for_user += len(tweets)
+            print("Received %s new tweets, in total %s for %s." % (len(tweets), total_for_user, username))
 
-    def listen_to_twitter(self, username):
-        tweets = self.get_tweets(username)
-        Processor.process_many(tweets)
-        latest_id = lastest_tweet_id + 1
+            if (len(tweets)):
+                latest_id = int(tweets[len(tweets)-1].id)
+                self.processor.process_many(tweets)
 
-        while latest_id > lastest_tweet_id:
-            tweets = self.get_tweets(username, latest_id)
-            latest_id = float(tweets[len(tweets)-1]['id_str'])
-            Processor.process_many(tweets)
+            if (len(tweets) < 200):
+                break
+        return total_for_user
 
-downloader = TwitterDownloader()
+if __name__ == '__main__':
+    log.startLogging(sys.stdout)
+    downloader = TwitterDownloader()
+    total_for_all = 0
 
-for user in users:
-    print('Downloading for %s' % user)
-    downloader.listen_to_twitter(user)
+    for index, username in enumerate(users):
+        print('[%s av %s] - Downloading tweets for %s' % (index+1, len(users), username))
+        total_for_all += downloader.download_user_tweets(username)
+
+    print("Download complete, %s tweets were downloaded in total." % (total_for_all))

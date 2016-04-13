@@ -16,7 +16,7 @@ class Repository:
                 INSERT INTO tweets
                 (id, username, name, content, timestamp) values
                 (:id, :username, :name, :content, :timestamp)''',
-                row 
+                row
             )
         except sqlite3.IntegrityError:
             return None
