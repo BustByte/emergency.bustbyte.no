@@ -16,7 +16,7 @@ class Repository:
                 INSERT INTO tweets
                 (id, username, name, content, timestamp) values
                 (:id, :username, :name, :content, :timestamp)''',
-                row 
+                row
             )
         except sqlite3.IntegrityError:
             return None
@@ -50,7 +50,7 @@ class Repository:
     def read_multiple(cls, tweets, query_object):
         tweets = tweets[:900]
         cur = Database.connection.cursor()
-        query = '''SELECT * FROM place_tweet WHERE timestamp < :end AND timestamp > :start
+        query = '''SELECT * FROM place_tweet WHERE timestamp <= :end AND timestamp >= :start
             AND latitude NOT NULL and longitude NOT NULL AND
         ('''
         for tweet_id in tweets:
@@ -109,7 +109,7 @@ class Repository:
         cur = Database.connection.cursor()
         query = query_object.get('query')
         cur.execute('''SELECT * FROM place_tweet
-            WHERE content LIKE :query AND timestamp < :end AND timestamp > :start
+            WHERE content LIKE :query AND timestamp <= :end AND timestamp >= :start
             AND latitude NOT NULL AND longitude NOT NULL
             LIMIT 1000''',
             {
@@ -136,7 +136,7 @@ class Repository:
     @classmethod
     def all_between_dates(cls, query_object):
         cur = Database.connection.cursor()
-        query = '''SELECT * FROM place_tweet WHERE timestamp < :end AND timestamp > :start AND latitude NOT NULL AND longitude NOT NULL'''
+        query = '''SELECT * FROM place_tweet WHERE timestamp <= :end AND timestamp >= :start AND latitude NOT NULL AND longitude NOT NULL'''
         cur.execute(query, {
             'end': query_object.end_date,
             'start': query_object.start_date

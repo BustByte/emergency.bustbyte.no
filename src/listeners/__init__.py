@@ -1,2 +1,2 @@
-from .epoch_converter import EpochConverter
+from .time_converter import TimeConverter
 from .twitter_listener import TwitterListener

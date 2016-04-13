@@ -2,7 +2,7 @@ from twitter import *
 from tweet.tweet import Tweet
 from user.user import User
 from config import configuration as config
-from listeners import EpochConverter
+from listeners import TimeConverter
 import os
 
 class OAuthSettings:
@@ -31,7 +31,7 @@ class TwitterListener:
                 tweet.user = User(twitter_object['user']['name'], twitter_object['user']['screen_name'])
                 tweet.id = twitter_object['id_str']
                 tweet.content = twitter_object['text']
-                tweet.timestamp = EpochConverter.to_date_string(twitter_object['timestamp_ms'])
+                tweet.timestamp = TimeConverter.epoch_to_date_string(twitter_object['timestamp_ms'])
 
                 # Send the tweet to the parent process (web socket)
                 parent_process.send(tweet)
