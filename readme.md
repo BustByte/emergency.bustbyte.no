@@ -1,4 +1,4 @@
-# Emergency [![Build Status](https://travis-ci.org/michaelmcmillan/emergency.svg?branch=master)](https://travis-ci.org/michaelmcmillan/emergency)
+# Emergency [![Build Status](https://travis-ci.org/BustByte/emergency.svg?branch=master)](https://travis-ci.org/BustByte/emergency)
 
 ## Install
 ```
