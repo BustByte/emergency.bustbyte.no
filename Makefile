@@ -46,10 +46,8 @@ upload-database:
 
 download-tweets: export PYTHONPATH=$(MODULES)
 download-tweets: export PYTHONDONTWRITEBYTECODE="false"
-download-tweets:
-	$(PYTHON) $(TWITTER_DOWNLOAD)
-
 download-tweets: clean
+	$(PYTHON) $(TWITTER_DOWNLOAD)
 
 clean:
 	-@find . -name '.DS_Store'   -delete
