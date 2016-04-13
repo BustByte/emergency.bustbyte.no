@@ -1,4 +1,4 @@
-# Emergency [![Build Status](https://travis-ci.org/BustByte/emergency.svg?branch=master)](https://travis-ci.org/BustByte/emergency)
+# Emergency [![Build Status](https://travis-ci.org/BustByte/emergency.bustbyte.no.svg?branch=master)](https://travis-ci.org/BustByte/emergency.bustbyte.no)
 
 ## Install
 ```
