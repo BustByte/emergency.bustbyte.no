@@ -7,7 +7,8 @@ configuration = {
     'ontology': {
         'tunnel': 'http://127.0.0.1',
         'port': '8080',
-        'page': 'owlapi'
+        'page': 'owlapi',
+        'add_tweets': 'addTweet'
     },
 
     'twitter': {
