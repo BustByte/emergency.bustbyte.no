@@ -111,7 +111,7 @@ class Repository:
         cur.execute('''SELECT * FROM place_tweet
             WHERE content LIKE :query AND timestamp <= :end AND timestamp >= :start
             AND latitude NOT NULL AND longitude NOT NULL
-            LIMIT 2000''',
+            LIMIT 1000''',
             {
                 #'query': '*[ ,./:;#@(][{0}{1}]{2}[ ,.\!?:;/\')]*'.format(query[0].lower(), query[0].upper(), query[1:]),
                 'query': '%{0}%'.format(query),
