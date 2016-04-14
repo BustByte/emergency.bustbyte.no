@@ -48,7 +48,7 @@ class Repository:
 
     @classmethod
     def read_multiple(cls, tweets, query_object):
-        tweets = tweets[:900]
+        tweets = tweets[:980]
         cur = Database.connection.cursor()
         query = '''SELECT * FROM place_tweet WHERE timestamp <= :end AND timestamp >= :start
             AND latitude NOT NULL and longitude NOT NULL AND
