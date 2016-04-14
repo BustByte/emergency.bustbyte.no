@@ -257,7 +257,7 @@ function generateSearchQueryObject(){
 	return JSON.stringify({
 		query: $('#search input[name="query"]').val(),
 		startDate: $('#search input[name="start"]').val(),
-		endDate: $('#search input[name="end"]').val(),
+		endDate: new Date($('#search input[name="end"]').val()).toDateInputValue(true),
 		type: 'search'
 	});
 }
@@ -269,7 +269,7 @@ function generateCategoryQueryObject(){
 			event: selectedEvent,
 			evidence: selectedEvidence,
 			startDate: $('#category input[name="start"]').val(),
-			endDate: $('#category input[name="end"]').val(),
+			endDate: new Date($('#search input[name="end"]').val()).toDateInputValue(true),
 			type: 'category'
 		});
 	}
@@ -309,7 +309,7 @@ $(document).ready(function(event) {
 	});
 
 	// Default date today
-	$('input[name="start"], input[name="end"]').val(new Date().toDateInputValue());
+	$('input[name="start"], input[name="end"]').val(new Date().toDateInputValue(false));
 
 	// Click listeners on category buttons
 	$('.category-buttons .evidence i').click(function(){
@@ -370,8 +370,10 @@ function disableSearchForm(){
 }
 
 
-Date.prototype.toDateInputValue = (function() {
+Date.prototype.toDateInputValue = (function(addDay) {
     var local = new Date(this);
     local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
+    if (addDay) local.setDate(local.getDate() + 1);
     return local.toJSON().slice(0,10);
 });
+

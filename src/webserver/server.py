@@ -64,6 +64,8 @@ class BroadcastServerFactory(WebSocketServerFactory):
 
     def save_and_broadcast_tweet(self, tweet):
         position_tweet = self.processor.process(tweet)
+        # Send the tweet to the ontology
+        Tunnel().push([position_tweet])
         json_tweet = Json.generate_json([position_tweet])
         self.broadcast(json.dumps({'tweets': json_tweet}))
         print("Broadcasting %s to %d clients" % (position_tweet, len(self.clients)))
