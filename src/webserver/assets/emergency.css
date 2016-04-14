@@ -24,7 +24,7 @@ div.option-box{
 }
 
 @media screen and (max-width: 767px){
-	div.option-box{
+	div.option-box, .github{
 		display: none;
 	}
 }
@@ -229,4 +229,16 @@ div.input-group input[type="submit"]{
 .category-buttons i:hover::after {
     opacity: 1;
     bottom: -30px;
+ }
+
+ .github{
+ 	position: fixed;
+ 	bottom: 5px;
+ 	left: calc(50% - 17px);
+ 	outline: none;
+ }
+
+ .github img{
+ 	width: 34px;
+ 	height: 34px;
  }
