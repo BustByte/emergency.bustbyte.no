@@ -128,11 +128,13 @@ div.search-loader{
 	background: #ddd;
 }
 
-#search div.search-loader .fa-circle-o-notch{
+#search div.search-loader img{
+	width: 30px;
 	margin: 9px 0 0;
 }
 
-#category div.search-loader .fa-circle-o-notch{
+#category div.search-loader img{
+	width: 30px;
 	margin: 18px 0 0;
 }
 
