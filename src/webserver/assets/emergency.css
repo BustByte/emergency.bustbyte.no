@@ -126,7 +126,6 @@ div.search-loader{
 	width: 25%;
 	text-align: center;
 	background: #ddd;
-	display: none;
 }
 
 #search div.search-loader .fa-circle-o-notch{
@@ -146,6 +145,10 @@ div.search-loader{
 	position: absolute;
 	left: -100px;
 	margin: 0;
+}
+
+.hidden{
+	display: none;
 }
 
 .category-buttons [class^="flaticon-"]:before, .category-buttons [class*=" flaticon-"]:before, .category-buttons [class^="flaticon-"]:after, .category-buttons [class*=" flaticon-"]:after{
@@ -208,8 +211,7 @@ div.input-group input[type="submit"]{
 }
 
 .category-buttons i::after {
-    content: attr(data-tip) ;   
-     
+    content: attr(data-tip);
     font-size: 13px;
     position:absolute;
     z-index: 999;

@@ -359,14 +359,14 @@ $(document).ready(function(event) {
 
 
 function enableSearchForm(){
-	$('.search-loader').hide();
+	$('.search-loader').addClass('hidden');
 	$('.search-button').show();
 }
 
 
 function disableSearchForm(){
 	$('.search-button').hide();
-	$('.search-loader').show();
+	$('.search-loader').removeClass('hidden');
 }
 
 
