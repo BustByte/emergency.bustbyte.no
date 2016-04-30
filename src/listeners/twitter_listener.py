@@ -38,3 +38,5 @@ class TwitterListener:
             except (KeyError, TypeError) as e:
                 # We encoutered something other than a tweet, moving on.
                 pass
+            except (StopIteration):
+                return listen_to_twitter(parent_process)
